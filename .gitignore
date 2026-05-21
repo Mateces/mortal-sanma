@@ -12,3 +12,6 @@ __pycache__
 *.ipynb
 
 /_draft
+test-data/
+ref-3p/
+.venv/

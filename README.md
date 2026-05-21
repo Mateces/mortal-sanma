@@ -1,36 +1,53 @@
-<p align="center">
-  <img src="https://github.com/Equim-chan/Mortal/raw/main/docs/src/assets/logo.png" width="550" />
-</p>
+# mortal-sanma
 
-# Mortal
-[![GitHub Workflow Status](https://img.shields.io/github/actions/workflow/status/Equim-chan/Mortal/libriichi.yml?branch=main)](https://github.com/Equim-chan/Mortal/actions/workflows/libriichi.yml)
-[![GitHub Workflow Status](https://img.shields.io/github/actions/workflow/status/Equim-chan/Mortal/docs.yml?branch=main&label=docs)](https://mortal.ekyu.moe)
-[![dependency status](https://deps.rs/repo/github/Equim-chan/Mortal/status.svg)](https://deps.rs/repo/github/Equim-chan/Mortal)
-![GitHub top language](https://img.shields.io/github/languages/top/Equim-chan/Mortal)
-![Lines of code](https://www.aschey.tech/tokei/github/Equim-chan/Mortal)
-![GitHub code size in bytes](https://img.shields.io/github/languages/code-size/Equim-chan/Mortal)
-[![license](https://img.shields.io/github/license/Equim-chan/Mortal)](https://github.com/Equim-chan/Mortal/blob/main/LICENSE)
+三人麻将（三麻）版 [Mortal](https://github.com/Equim-chan/Mortal) libriichi。
 
-[![Donate](https://img.shields.io/badge/Donate-%E2%9D%A4%EF%B8%8F-blue?style=social)](https://mortal.ekyu.moe/donate.html)
+将 Mortal 的四人麻将引擎改造为三人麻将专用，可用于 AI 训练和推理。
 
-Mortal ([凡夫](https://www.mdbg.net/chinese/dictionary?wdqb=%E5%87%A1%E5%A4%AB)) is a free and open source AI for Japanese mahjong, powered by deep reinforcement learning.
+## 与 Mortal 的区别
 
-Read the [**Documentation**](https://mortal.ekyu.moe) for everything about this work.
+| 项目 | Mortal (四麻) | mortal-sanma (三麻) |
+|------|--------------|-------------------|
+| 玩家数 | 4 | 3 |
+| 牌山 | 136 张 | 108 张（无 2-8m） |
+| 红宝牌 | 5mr/5pr/5sr | 5pr/5sr（无红5m） |
+| 吃 | 有 | 禁用 |
+| 拔北 | 无 | Nukidora 事件 |
+| 自摸损 | 无 | 缺席玩家不付 |
+| 半庄 | 8 局 | 6 局（东1-3 + 南1-3） |
+| ACTION_SPACE | 46 | 44 |
+| obs_shape | (1012, 34) | (775, 34) |
 
-## Okay cool now give me the weights!
-Read [this post](https://gist.github.com/Equim-chan/cf3f01735d5d98f1e7be02e94b288c56) for details regarding this topic.
+## 兼容性
 
-## License
-### Code
-[![AGPL-3.0-or-later](https://github.com/Equim-chan/Mortal/raw/main/docs/src/assets/agpl.png)](https://github.com/Equim-chan/Mortal/blob/main/LICENSE)
+- **与 Akagi/MahjongCopilot 的 libriichi3p 接口兼容**（obs_shape=775, ACTION_SPACE=44）
+- **不兼容四麻**——这是纯三麻专用 fork
+- 可直接替换 MahjongCopilot 的 `libriichi3p/` 目录中的 .so/.pyd 文件
 
-Copyright (C) 2021-2022 Equim
+## 编译
 
-This program is free software: you can redistribute it and/or modify it under the terms of the GNU Affero General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+```bash
+# 需要 Rust + Python + maturin
+cd libriichi
+maturin build --release
+# 产物在 target/wheels/
+```
 
-This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License for more details.
+## 预编译下载
 
-You should have received a copy of the GNU Affero General Public License along with this program. If not, see <https://www.gnu.org/licenses/>.
+从 [Releases](../../releases) 下载对应平台的预编译文件：
+- `libriichi-*-x86_64-unknown-linux-gnu.so` (Linux x64)
+- `libriichi-*-aarch64-apple-darwin.so` (macOS ARM)
+- `libriichi-*-x86_64-pc-windows-msvc.pyd` (Windows x64)
 
-### Logo and Other Assets
-[![CC BY-SA 4.0](https://github.com/Equim-chan/Mortal/raw/main/docs/src/assets/by-sa.png)](https://creativecommons.org/licenses/by-sa/4.0/)
+## 验证
+
+已通过 200 条天凤三麻凤凰桌牌谱（1832 局）的完整事件流验证，与原始数据 100% 一致。
+
+## 许可证
+
+AGPL-3.0，基于 [Equim-chan/Mortal](https://github.com/Equim-chan/Mortal)。
+
+## 致谢
+
+- [Mortal](https://github.com/Equim-chan/Mortal) — 原始四麻 AI 引擎
