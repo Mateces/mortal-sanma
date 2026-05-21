@@ -158,10 +158,11 @@ impl Tile {
         let tile = self.deaka();
         let tid = tile.0;
         let kind = tid / 9;
+        // Sanma: only p↔s swap is valid (m has only 1m/9m, not symmetric with p/s)
         let ret = match kind {
-            0 => Self(tid + 9),
-            1 => Self(tid - 9),
-            _ => tile,
+            1 => Self(tid + 9),  // p → s
+            2 => Self(tid - 9),  // s → p
+            _ => tile,           // m and honors unchanged
         };
         if self.is_aka() { ret.akaize() } else { ret }
     }
