@@ -97,10 +97,9 @@ impl Grp {
             match *ev {
                 Event::Hora { deltas, .. } | Event::Ryukyoku { deltas, .. } => {
                     if rank_by_player_opt.is_none() {
-                        let ds = deltas.context(
-                            "invalid log: field `deltas` is required for Hora and Ryukyoku of AL",
-                        )?;
-                        vec_add_assign(&mut final_deltas, &ds);
+                        if let Some(ds) = deltas {
+                            vec_add_assign(&mut final_deltas, &ds);
+                        }
                     }
                 }
                 Event::ReachAccepted { actor } => {
