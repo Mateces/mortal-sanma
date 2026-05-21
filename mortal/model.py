@@ -237,19 +237,19 @@ class GRP(nn.Module):
         self.fc = nn.Sequential(
             nn.Linear(hidden_size * num_layers, hidden_size * num_layers),
             nn.ReLU(inplace=True),
-            nn.Linear(hidden_size * num_layers, 24),
+            nn.Linear(hidden_size * num_layers, 6),
         )
         for mod in self.modules():
             mod.to(torch.float64)
 
         # perms are the permutations of all possible rank-by-player result
-        perms = torch.tensor(list(permutations(range(4))))
+        perms = torch.tensor(list(permutations(range(3))))
         perms_t = perms.transpose(0, 1)
-        self.register_buffer('perms', perms)     # (24, 4)
-        self.register_buffer('perms_t', perms_t) # (4, 24)
+        self.register_buffer('perms', perms)     # (6, 3)
+        self.register_buffer('perms_t', perms_t) # (3, 6)
 
-    # input: [grand_kyoku, honba, kyotaku, s[0], s[1], s[2], s[3]]
-    # grand_kyoku: E1 = 0, S4 = 7, W4 = 11
+    # input: [grand_kyoku, honba, kyotaku, s[0], s[1], s[2]]
+    # grand_kyoku: E1 = 0, S3 = 5
     # s is 2.5 at E1
     # s[0] is score of player id 0
     def forward(self, inputs: List[Tensor]):

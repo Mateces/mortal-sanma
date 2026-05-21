@@ -134,8 +134,8 @@ impl Grp {
                     let mut kyoku_info = array_vec!([_; GRP_SIZE]);
                     let grand_kyoku = match bakaze.as_u8() {
                         tu8!(E) => kyoku - 1,
-                        tu8!(S) => 3 + kyoku,
-                        _ => 7 + kyoku,
+                        tu8!(S) => 3 + kyoku - 1,
+                        _ => 5 + kyoku,
                     };
                     kyoku_info.push(grand_kyoku as f64);
                     kyoku_info.push(honba as f64);

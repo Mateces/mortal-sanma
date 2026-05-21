@@ -17,8 +17,8 @@ pub const ACTION_SPACE: usize = 37 // discard | kan (choice)
                               + 1; // pass
 // = 44 (chi removed, nukidora added)
 
-/// GRP output size: 3-player ranking permutations = 6, plus 1 for draw.
-pub const GRP_SIZE: usize = 7;
+/// GRP input size: [grand_kyoku, honba, kyotaku, s0, s1, s2] = 6.
+pub const GRP_SIZE: usize = 6;
 
 #[pyfunction]
 #[inline]
