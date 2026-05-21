@@ -166,7 +166,7 @@ impl<'a> ObsEncoderContext<'a> {
 
         let n = state.rank as usize;
         self.arr.fill(self.idx + n, 1.);
-        self.idx += 3;
+        self.idx += 4;
 
         let n = state.kyoku as usize;
         match self.version {
@@ -175,7 +175,7 @@ impl<'a> ObsEncoderContext<'a> {
             2 | 3 | 4 | 5 => self.arr.fill(self.idx + n, 1.),
             _ => unreachable!(),
         }
-        self.idx += 3;
+        self.idx += 4;
 
         let cap = match self.version {
             1 | 4 => 10,
@@ -371,13 +371,13 @@ impl<'a> ObsEncoderContext<'a> {
             .enumerate()
             .filter(|&(_, &b)| b)
             .for_each(|(i, _)| self.arr.fill(self.idx + i, 1.));
-        self.idx += 2;
+        self.idx += 3;
         state.riichi_accepted[1..]
             .iter()
             .enumerate()
             .filter(|&(_, &b)| b)
             .for_each(|(i, _)| self.arr.fill(self.idx + i, 1.));
-        self.idx += 2;
+        self.idx += 3;
 
         state
             .waits
@@ -483,14 +483,15 @@ impl<'a> ObsEncoderContext<'a> {
         }
         self.idx += 1;
 
-        // Sanma: chi disabled, use slot for nukidora
+        // Sanma: chi disabled, nukidora uses slot 38. Chi slots kept for dimension compatibility.
         if cans.can_nukidora {
             self.arr.fill(self.idx, 1.);
             if !self.at_kan_select {
                 self.mask[38] = true;
             }
         }
-        self.idx += 1;
+        // chi_mid and chi_high slots always 0 in sanma
+        self.idx += 3;
 
         if cans.can_pon {
             self.arr.fill(self.idx, 1.);

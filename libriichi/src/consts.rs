@@ -30,7 +30,7 @@ pub const fn obs_shape(version: u32) -> (usize, usize) {
         3 => (934, 34),
         4 => (1012, 34),
         // Sanma version
-        5 => (769, 34),
+        5 => (775, 34),
         _ => unreachable!(),
     }
 }
