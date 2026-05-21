@@ -1,0 +1,22 @@
+[book]
+authors = ["Equim"]
+language = "en"
+multilingual = false
+src = "src"
+title = "🀄️Mortal Documentation"
+description = "Mortal - a free and open source AI for Japanese mahjong"
+
+[preprocessor.admonish]
+assets_version = "3.0.0" # do not edit: managed by `mdbook-admonish install`
+
+[preprocessor.pagetoc]
+
+[output.html]
+default-theme = "ayu"
+preferred-dark-theme = "ayu"
+mathjax-support = true
+site-url = "/"
+cname = "mortal.ekyu.moe"
+git-repository-url = "https://github.com/Equim-chan/Mortal"
+additional-js = ["theme/pagetoc.js"]
+additional-css = ["theme/pagetoc.css", "css/mdbook-admonish.css", "css/extra.css"]

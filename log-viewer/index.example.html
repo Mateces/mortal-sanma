@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html><head>
+  <meta charset="utf-8">
+  <title>Mahjong Archive Player</title>
+  <link rel="stylesheet" type="text/css" href="files/css/style.css">
+  <script src="files/js/jquery-1.7.2.min.js"></script>
+  <script src="files/js/dytem.js"></script>
+  <script>
+    allActions = `
+{"type":"start_game","names":["baseline","mortal","baseline","baseline"],"seed":[10637,12210010324280706444]}
+{"type":"start_kyoku","bakaze":"E","dora_marker":"W","kyoku":1,"honba":0,"kyotaku":0,"oya":0,"scores":[25000,25000,25000,25000],"tehais":[["3p","1p","5m","6m","W","3m","6s","5s","2p","P","1p","6m","4p"],["P","3s","8m","9m","P","1m","7m","9s","2s","7m","3s","6s","5m"],["C","8m","C","E","1s","8s","3p","N","1p","1p","S","7s","4s"],["9m","8s","7m","1s","4p","8p","2m","9p","8m","6s","3m","9p","8p"]]}
+{"type":"tsumo","actor":0,"pai":"1s"}
+{"type":"dahai","actor":0,"pai":"W","tsumogiri":false,"meta":{"q_values":[-9.09196,-9.46696,-8.365397,-8.849772,-9.43571,-10.06071,-9.295085,-0.73649096,-9.27946,-9.357585,0.3221028,-2.7794597],"mask_bits":2697207348,"is_greedy":true,"eval_time_ns":357088300}}
+{"type":"tsumo","actor":1,"pai":"5s"}
+{"type":"dahai","actor":1,"pai":"9s","tsumogiri":false,"meta":{"q_values":[-0.11369185,-1.2201371,-1.0716996,-1.1937699,-1.3187699,-1.1752152,-1.0980668,-1.195723,-1.1674027,0.042069867,-0.9828325],"mask_bits":2228748753,"is_greedy":true,"eval_time_ns":112386600}}
+{"type":"tsumo","actor":2,"pai":"4m"}
+{"type":"dahai","actor":2,"pai":"1s","tsumogiri":false,"meta":{"q_values":[-3.4085896,-1.8206991,-7.4007773,-5.75234,0.30625406,-3.7249959,-7.53359,-7.5609336,-3.3656209,-0.6195272,-5.053121,-7.881246],"mask_bits":10119023240,"is_greedy":true,"eval_time_ns":301054300}}
+{"type":"tsumo","actor":3,"pai":"F"}
+{"type":"dahai","actor":3,"pai":"1s","tsumogiri":false,"meta":{"q_values":[-9.425415,-9.487915,-9.487915,-9.612915,-8.417603,-4.7301025,-5.8238525,-7.3238525,0.26989746,-6.5582275,-8.042603,-1.2418213],"mask_bits":4337373638,"is_greedy":true,"eval_time_ns":311541200}}
+{"type":"tsumo","actor":0,"pai":"S"}
+{"type":"dahai","actor":0,"pai":"S","tsumogiri":true,"meta":{"q_values":[-9.36556,-10.029622,-8.263997,-9.185872,-9.83431,-10.45931,-9.787435,-0.54134107,-9.80306,-9.818685,0.24772143,-3.056966],"mask_bits":2428771892,"is_greedy":true,"eval_time_ns":303455100}}
+{"type":"tsumo","actor":1,"pai":"W"}
+{"type":"dahai","actor":1,"pai":"1m","tsumogiri":false,"meta":{"q_values":[0.016479492,-1.2935791,-1.1519775,-1.2906494,-1.4224854,-1.0894775,-1.1851807,-1.3033447,-1.322876,-0.034301758,-1.1392822],"mask_bits":2698510801,"is_greedy":true,"eval_time_ns":111257500}}
+{"type":"tsumo","actor":2,"pai":"E"}
+{"type":"dahai","actor":2,"pai":"S","tsumogiri":false,"meta":{"q_values":[-4.1648617,-0.66876775,-7.2859554,-6.262518,-3.5437677,-8.696112,-8.563299,-6.7898617,0.249201,-5.6179867,-7.782049],"mask_bits":10118761096,"is_greedy":true,"eval_time_ns":303442200}}
+{"type":"tsumo","actor":3,"pai":"5p"}
+{"type":"dahai","actor":3,"pai":"F","tsumogiri":false,"meta":{"q_values":[-9.425049,-9.635986,-10.073486,-10.339111,-9.268799,-9.573486,-9.409424,-5.565674,-4.7141113,-8.714111,-6.471924,0.008544922],"mask_bits":4337119686,"is_greedy":true,"eval_time_ns":312763300}}
+{"type":"tsumo","actor":0,"pai":"5sr"}
+{"type":"dahai","actor":0,"pai":"1s","tsumogiri":false,"meta":{"q_values":[-8.371338,-9.75415,-7.6135254,-8.7229,-9.644775,-10.1604,-9.519775,0.39819336,-6.402588,-8.832275,-0.25024414,-9.058838],"mask_bits":70879813172,"is_greedy":true,"eval_time_ns":296776300}}
+{"type":"tsumo","actor":1,"pai":"8p"}
+{"type":"dahai","actor":1,"pai":"W","tsumogiri":false,"meta":{"q_values":[-1.3992115,-1.297649,-1.4148365,-1.4578053,-0.500774,-0.9363209,-1.2742115,-1.4802662,-1.4802662,-0.02421154,-1.2810475],"mask_bits":2698576336,"is_greedy":true,"eval_time_ns":112081400}}
+{"type":"tsumo","actor":2,"pai":"2s"}
+{"type":"dahai","actor":2,"pai":"8m","tsumogiri":false,"meta":{"q_values":[-4.008434,0.09312856,-7.695934,-6.352184,-7.570934,-7.930309,-9.359997,-8.984997,-8.438122,-3.9459338,-8.633434],"mask_bits":9850849928,"is_greedy":true,"eval_time_ns":302540200}}
+{"type":"tsumo","actor":3,"pai":"3m"}
+{"type":"dahai","actor":3,"pai":"3m","tsumogiri":true,"meta":{"q_values":[-6.262784,0.26846588,-8.184659,-8.4737215,-7.200284,-7.200284,-7.1143465,-0.72567475,0.17862213,-4.075284,-0.67098725],"mask_bits":42152390,"is_greedy":true,"eval_time_ns":307524000}}
+{"type":"tsumo","actor":0,"pai":"F"}
+{"type":"dahai","actor":0,"pai":"F","tsumogiri":true,"meta":{"q_values":[-7.8447876,-10.0401,-7.9229126,-8.235413,-9.954163,-10.344788,-9.954163,-5.520569,-9.672913,-1.2666626,0.2333374,-9.657288],"mask_bits":75174518324,"is_greedy":true,"eval_time_ns":302425100}}
+{"type":"tsumo","actor":1,"pai":"5p"}
+{"type":"dahai","actor":1,"pai":"8p","tsumogiri":false,"meta":{"q_values":[-1.4406017,-1.3370861,-1.4269298,-1.4308361,-1.1398205,-0.050464973,-0.75700796,-1.3087658,-1.5167736,-1.5333751,-1.2482189],"mask_bits":2161713616,"is_greedy":true,"eval_time_ns":112575800}}
+{"type":"tsumo","actor":2,"pai":"5m"}
+{"type":"dahai","actor":2,"pai":"4s","tsumogiri":false,"meta":{"q_values":[-5.2954545,-5.9087358,-6.115767,-1.9946733,0.16548294,0.33735794,-6.8774858,-7.1587358,-6.6743608,-0.83256394,-6.7446733],"mask_bits":9850849816,"is_greedy":true,"eval_time_ns":300653300}}
+{"type":"tsumo","actor":3,"pai":"E"}
+{"type":"dahai","actor":3,"pai":"E","tsumogiri":true,"meta":{"q_values":[-9.194366,-8.975616,-9.663116,-10.061554,-9.069366,-8.920929,-8.999054,-2.514679,-2.608429,-7.5693665,-5.4482727,0.14938354],"mask_bits":176370118,"is_greedy":true,"eval_time_ns":307112200}}
+{"type":"pon","actor":2,"target":3,"pai":"E","consumed":["E","E"],"meta":{"q_values":[0.07421875,-3.2539062],"mask_bits":37383395344384,"is_greedy":true,"eval_time_ns":297030800}}
+{"type":"dahai","actor":2,"pai":"2s","tsumogiri":false,"meta":{"q_values":[-9.520061,-9.527873,-9.230998,-4.8520913,0.14400232,-9.355998,-9.230998,-6.2153726,-9.035686],"mask_bits":9714534936,"is_greedy":true,"eval_time_ns":303633700}}
+{"type":"tsumo","actor":3,"pai":"9m"}
+{"type":"dahai","actor":3,"pai":"9m","tsumogiri":true,"meta":{"q_values":[-9.728604,-9.525479,-9.275479,-8.759854,-0.005948186,-9.697354,-9.603604,-4.3536043,-5.002042,-8.462979,-7.3067293],"mask_bits":42152390,"is_greedy":true,"eval_time_ns":300608100}}
+{"type":"tsumo","actor":0,"pai":"4p"}
+{"type":"dahai","actor":0,"pai":"P","tsumogiri":false,"meta":{"q_values":[-4.052801,-9.494207,-7.97077,-4.959051,-9.509832,-9.791082,-7.736395,-5.4043636,-9.173895,-0.005926013,-9.509832],"mask_bits":70879551028,"is_greedy":true,"eval_time_ns":305293400}}
+{"type":"pon","actor":1,"target":0,"pai":"P","consumed":["P","P"],"meta":{"q_values":[-0.0899353,-0.17105103],"mask_bits":37383395344384,"is_greedy":true,"eval_time_ns":108243000}}
+{"type":"dahai","actor":1,"pai":"2s","tsumogiri":false,"meta":{"q_values":[-1.2974854,-1.1968994,-1.3267822,-1.34729,-0.15490723,-0.10559082,-1.1295166,-1.3931885,-1.4088135],"mask_bits":14164432,"is_greedy":true,"eval_time_ns":106257600}}
+{"type":"tsumo","actor":2,"pai":"9s"}
+{"type":"dahai","actor":2,"pai":"N","tsumogiri":false,"meta":{"q_values":[-7.893229,-7.7916665,-7.2916665,-0.46354163,-8.791667,-8.666667,-7.549479,0.29427087,-7.4635415],"mask_bits":9781119512,"is_greedy":true,"eval_time_ns":299119800}}
+{"type":"tsumo","actor":3,"pai":"5mr"}
+{"type":"dahai","actor":3,"pai":"9p","tsumogiri":false,"meta":{"q_values":[-1.9476522,-6.8402305,-7.8089805,-6.785543,-6.5902305,-7.2777305,-7.3871055,-0.21523035,0.35312903,-3.0433555,-1.5472616,-1.6351522],"mask_bits":17222021574,"is_greedy":true,"eval_time_ns":303715100}}
+{"type":"tsumo","actor":0,"pai":"4m"}
+{"type":"dahai","actor":0,"pai":"5s","tsumogiri":false,"meta":{"q_values":[-7.6027164,-8.915216,-8.258966,-5.6339664,-0.3234197,-8.087091,-7.9777164,-1.5148259,0.27618968,-7.407404,-8.446466],"mask_bits":68732067388,"is_greedy":true,"eval_time_ns":300138600}}
+{"type":"tsumo","actor":1,"pai":"1m"}
+{"type":"dahai","actor":1,"pai":"1m","tsumogiri":true,"meta":{"q_values":[-0.13553874,-1.445109,-1.382609,-1.429484,-1.4246012,-0.7668864,-1.273234,-1.3230387,-1.4802653],"mask_bits":13640145,"is_greedy":true,"eval_time_ns":107793800}}
+{"type":"tsumo","actor":2,"pai":"C"}
+{"type":"dahai","actor":2,"pai":"3p","tsumogiri":false,"meta":{"q_values":[-9.001831,-8.845581,-7.6033936,0.2911377,-9.447144,-9.033081,-8.244019,-7.9315186],"mask_bits":8707377688,"is_greedy":true,"eval_time_ns":298855400}}
+{"type":"tsumo","actor":3,"pai":"2m"}
+{"type":"dahai","actor":3,"pai":"9p","tsumogiri":false,"meta":{"q_values":[-1.1883749,-6.9911094,-8.202046,-5.873922,-6.4286094,-7.639547,-7.842672,-1.7879843,0.3487345,-3.5653281,-2.6336875,-4.123922],"mask_bits":17222021574,"is_greedy":true,"eval_time_ns":291031500}}
+{"type":"tsumo","actor":0,"pai":"3p"}
+{"type":"dahai","actor":0,"pai":"1p","tsumogiri":false,"meta":{"q_values":[-6.8038087,-9.975683,-9.616308,-5.561621,0.2821288,-8.897558,-8.975683,-7.0850587,-9.170996,-9.366308],"mask_bits":68727873084,"is_greedy":true,"eval_time_ns":296926200}}
+{"type":"tsumo","actor":1,"pai":"6p"}
+{"type":"dahai","actor":1,"pai":"7m","tsumogiri":false,"meta":{"q_values":[-0.118162796,-0.110350296,-0.7880847,-0.9204089,-1.0927721,-1.0693346,-0.71874875,-0.9707019,-0.97363156],"mask_bits":13656528,"is_greedy":true,"eval_time_ns":104780500}}
+{"type":"tsumo","actor":2,"pai":"4s"}
+{"type":"dahai","actor":2,"pai":"4s","tsumogiri":true,"meta":{"q_values":[-10.366943,-10.374756,-9.976318,0.18774414,-10.406006,-10.046631,-9.921631,-9.343506],"mask_bits":8709472792,"is_greedy":true,"eval_time_ns":287767100}}
+{"type":"tsumo","actor":3,"pai":"6m"}
+{"type":"dahai","actor":3,"pai":"2m","tsumogiri":false,"meta":{"q_values":[0.32063806,-4.1754556,-7.183268,-4.726237,-1.1207682,-0.10514319,-6.8785806,-6.9098306,-1.1363932,-0.8971354,-0.53287756,-6.855143],"mask_bits":17221890534,"is_greedy":true,"eval_time_ns":297939400}}
+{"type":"tsumo","actor":0,"pai":"6p"}
+{"type":"dahai","actor":0,"pai":"6p","tsumogiri":true,"meta":{"q_values":[-9.563388,-9.930575,-9.8837,-9.266513,-2.1337004,-8.969638,-8.141513,-8.469638,0.31942463,-9.180575,-9.329013],"mask_bits":68727889468,"is_greedy":true,"eval_time_ns":283708200}}
+{"type":"tsumo","actor":1,"pai":"4s"}
+{"type":"dahai","actor":1,"pai":"5m","tsumogiri":false,"meta":{"q_values":[-0.024340808,-1.3778565,-1.4149659,-1.3739502,-1.5956299,-1.5438721,-1.3915284,-1.4423096,-1.5712159,-1.526294],"mask_bits":15753680,"is_greedy":true,"eval_time_ns":103432800}}
+{"type":"tsumo","actor":2,"pai":"4s"}
+{"type":"dahai","actor":2,"pai":"4s","tsumogiri":true,"meta":{"q_values":[-10.333008,-10.254883,-10.083008,0.14355469,-10.458008,-10.098633,-9.958008,-9.395508],"mask_bits":8709472792,"is_greedy":true,"eval_time_ns":291343500}}
+{"type":"tsumo","actor":3,"pai":"9p"}
+{"type":"dahai","actor":3,"pai":"9p","tsumogiri":true,"meta":{"q_values":[-5.5436916,-7.832754,-9.262442,-8.551504,-4.4030666,-4.8405666,-9.176504,-9.106192,-6.973379,0.069589496,-4.567129,-5.2624416,-6.770254],"mask_bits":17222021606,"is_greedy":true,"eval_time_ns":289986000}}
+{"type":"tsumo","actor":0,"pai":"4p"}
+{"type":"reach","actor":0,"meta":{"q_values":[-8.616499,-9.952436,-9.108686,-7.577437,-4.596968,-8.405561,-6.4289994,-8.194624,-9.186811,-9.139936,0.38350058],"mask_bits":206166826556,"is_greedy":true,"eval_time_ns":283582900}}
+{"type":"dahai","actor":0,"pai":"3p","tsumogiri":false}
+{"type":"reach_accepted","actor":0}
+{"type":"tsumo","actor":1,"pai":"6m"}
+{"type":"dahai","actor":1,"pai":"9m","tsumogiri":false,"meta":{"q_values":[-1.3232543,-1.6152465,-1.4804809,-0.10792236,-1.5625122,-0.9228638,-0.6025513,-1.3027465,-1.0869262,-1.5000122],"mask_bits":15753696,"is_greedy":true,"eval_time_ns":107668800}}
+{"type":"tsumo","actor":2,"pai":"7s"}
+{"type":"dahai","actor":2,"pai":"7s","tsumogiri":true,"meta":{"q_values":[-9.133928,-8.844866,-1.0694754,-0.09877235,-5.7823663,-7.6104913,-5.571429],"mask_bits":8707375640,"is_greedy":true,"eval_time_ns":292751800}}
+{"type":"hora","actor":0,"target":2,"deltas":[8700,0,-7700,0],"ura_markers":["8p"]}
+{"type":"end_kyoku"}
+{"type":"start_kyoku","bakaze":"E","dora_marker":"1m","kyoku":1,"honba":1,"kyotaku":0,"oya":0,"scores":[32700,25000,17300,25000],"tehais":[["9p","5pr","S","9p","2p","C","9p","E","1m","7m","8p","3m","4p"],["F","4s","2m","F","8m","N","P","8p","3s","1p","9p","2m","F"],["8m","3p","9s","1m","5m","8s","6m","8s","4m","6m","1s","9m","5p"],["5p","5s","1s","5sr","3m","7m","1m","1p","2m","E","3p","6p","6m"]]}
+{"type":"tsumo","actor":0,"pai":"S"}
+{"type":"dahai","actor":0,"pai":"7m","tsumogiri":false,"meta":{"q_values":[-2.6111727,-4.8748446,0.32632726,-1.6678133,-6.9959383,-1.3416414,-6.0154696,-4.9529696,-5.273282,0.009921014,-7.507657],"mask_bits":43352527941,"is_greedy":true,"eval_time_ns":281303400}}
+{"type":"tsumo","actor":1,"pai":"1s"}
+{"type":"dahai","actor":1,"pai":"N","tsumogiri":false,"meta":{"q_values":[-1.2832919,-1.0635654,-0.26669034,-1.229581,-1.1407138,-0.34969816,-1.4434482,-1.3477451,0.16055575,-0.5606357,-1.3897372],"mask_bits":7519797890,"is_greedy":true,"eval_time_ns":98182500}}
+{"type":"tsumo","actor":2,"pai":"7s"}
+{"type":"dahai","actor":2,"pai":"1s","tsumogiri":false,"meta":{"q_values":[-2.5359597,-8.262523,-8.37971,-7.903147,-8.262523,-4.996897,-8.559398,-8.00471,0.15154016,-8.06721,-3.946116,-7.825022],"mask_bits":117713337,"is_greedy":true,"eval_time_ns":282461800}}
+{"type":"tsumo","actor":3,"pai":"5mr"}
+{"type":"dahai","actor":3,"pai":"1s","tsumogiri":false,"meta":{"q_values":[-7.968192,-8.538505,-8.444755,-8.452567,-8.038505,-7.608817,-8.358817,-8.27288,-8.124442,0.7700894,-7.936942,0.11774564,-8.640067,-8.288505],"mask_bits":86038047335,"is_greedy":true,"eval_time_ns":293536700}}
+{"type":"tsumo","actor":0,"pai":"2m"}
+{"type":"dahai","actor":0,"pai":"C","tsumogiri":false,"meta":{"q_values":[-6.8544035,-7.0262785,-5.7294035,-1.4129971,-7.4794035,-0.9520596,-6.3856535,-5.0575285,-5.987216,0.44247162,-8.1356535],"mask_bits":43352527879,"is_greedy":true,"eval_time_ns":283905200}}
+{"type":"tsumo","actor":1,"pai":"7p"}
+{"type":"dahai","actor":1,"pai":"P","tsumogiri":false,"meta":{"q_values":[-1.0258234,-0.7191828,0.14800471,-1.0736749,-1.1508234,-1.0228937,0.2236883,-1.1908624,-1.1527765,0.35259455,-0.9398859],"mask_bits":6446088834,"is_greedy":true,"eval_time_ns":106765300}}
+{"type":"tsumo","actor":2,"pai":"5s"}
+{"type":"dahai","actor":2,"pai":"1m","tsumogiri":false,"meta":{"q_values":[0.3203125,-8.035156,-8.292969,-3.1640625,-7.1601562,-0.19335938,-6.6601562,-7.0742188,-5.1328125,-7.6132812,-0.5292969,-5.8476562],"mask_bits":121645497,"is_greedy":true,"eval_time_ns":280788600}}
+{"type":"tsumo","actor":3,"pai":"7p"}
+{"type":"reach","actor":3,"meta":{"q_values":[-8.23138,-8.926693,-8.911068,-8.676693,-8.786068,-6.0907555,-8.364193,-8.340755,-8.497005,-8.35638,-8.098568,-1.1688802,-9.114193,-9.278255,0.8623698],"mask_bits":223476771431,"is_greedy":true,"eval_time_ns":279129300}}
+{"type":"dahai","actor":3,"pai":"E","tsumogiri":false}
+{"type":"reach_accepted","actor":3}
+{"type":"tsumo","actor":0,"pai":"5m"}
+{"type":"dahai","actor":0,"pai":"E","tsumogiri":false,"meta":{"q_values":[-9.989746,-10.747559,-10.528809,-8.567871,-7.286621,-10.325684,-8.583496,-9.075684,-0.23583984,-5.782715,-9.888184],"mask_bits":34762593303,"is_greedy":true,"eval_time_ns":281735900}}
+{"type":"tsumo","actor":1,"pai":"4p"}
+{"type":"dahai","actor":1,"pai":"1s","tsumogiri":false,"meta":{"q_values":[-1.6579312,-1.3874234,-1.1491421,-1.5329312,-1.6667203,-1.8151578,-1.5807828,-0.0417203,-1.694064,-1.6139859,-1.1354703],"mask_bits":4298609282,"is_greedy":true,"eval_time_ns":109056200}}
+{"type":"tsumo","actor":2,"pai":"9s"}
+{"type":"dahai","actor":2,"pai":"9s","tsumogiri":true,"meta":{"q_values":[-8.36286,-8.190985,-7.151922,-4.554266,-0.5327815,-7.386297,-7.839422,-5.3316097,-7.636297,-4.276922,-0.09332836],"mask_bits":121645496,"is_greedy":true,"eval_time_ns":278116700}}
+{"type":"tsumo","actor":3,"pai":"1p"}
+{"type":"dahai","actor":3,"pai":"1p","tsumogiri":true}
+{"type":"tsumo","actor":0,"pai":"4p"}
+{"type":"dahai","actor":0,"pai":"S","tsumogiri":false,"meta":{"q_values":[-7.6172853,-8.054785,-8.10166,-2.8399415,-4.7344728,-7.0391603,-0.31455076,-5.4180665,-0.177832,-8.398535],"mask_bits":34628375575,"is_greedy":true,"eval_time_ns":283242200}}
+{"type":"tsumo","actor":1,"pai":"8s"}
+{"type":"dahai","actor":1,"pai":"1p","tsumogiri":false,"meta":{"q_values":[-1.5844772,-1.33936,0.013179079,-1.4614303,-1.5151412,-1.6997116,-1.5952194,-1.6782272,-1.6401412,-1.3354537,-1.1596725],"mask_bits":4331901570,"is_greedy":true,"eval_time_ns":105115400}}
+{"type":"tsumo","actor":2,"pai":"C"}
+{"type":"dahai","actor":2,"pai":"9s","tsumogiri":false,"meta":{"q_values":[-9.715088,-9.574463,-8.777588,-9.027588,-6.7697754,-9.527588,-9.277588,-8.699463,-9.371338,-6.4260254,-0.08227539,-0.5900879],"mask_bits":8711580088,"is_greedy":true,"eval_time_ns":279288100}}
+{"type":"tsumo","actor":3,"pai":"9m"}
+{"type":"dahai","actor":3,"pai":"9m","tsumogiri":true}
+{"type":"tsumo","actor":0,"pai":"8m"}
+{"type":"dahai","actor":0,"pai":"S","tsumogiri":false,"meta":{"q_values":[-10.208407,-10.989657,-11.106845,-10.114657,-7.8334074,-9.895907,-10.645907,-9.958407,-9.036532,-0.26700115,-10.927157],"mask_bits":34628375703,"is_greedy":true,"eval_time_ns":293417300}}
+{"type":"tsumo","actor":1,"pai":"2p"}
+{"type":"dahai","actor":1,"pai":"8m","tsumogiri":false,"meta":{"q_values":[-1.3560458,-0.020596594,-1.1197177,-1.2603427,-1.3619052,-1.4371005,-1.3013583,-1.3804599,-1.326749,-0.06698331,-0.5308505],"mask_bits":4331902082,"is_greedy":true,"eval_time_ns":109643600}}
+{"type":"tsumo","actor":2,"pai":"8s"}
+{"type":"dahai","actor":2,"pai":"9m","tsumogiri":false,"meta":{"q_values":[-9.113459,-9.105646,-8.543146,-2.4962711,0.062322497,-8.707209,-9.004084,-8.918146,-8.824396,-8.230646,-2.3712711],"mask_bits":8644471224,"is_greedy":true,"eval_time_ns":298236400}}
+{"type":"tsumo","actor":3,"pai":"3s"}
+{"type":"dahai","actor":3,"pai":"3s","tsumogiri":true}
+{"type":"tsumo","actor":0,"pai":"2s"}
+{"type":"dahai","actor":0,"pai":"8m","tsumogiri":false,"meta":{"q_values":[-8.454989,-9.619052,-9.579989,-7.6893644,-0.056551814,-6.3612394,-6.681552,-6.7245207,-3.0838957,-3.8924894,-9.533114],"mask_bits":34360464535,"is_greedy":true,"eval_time_ns":288119700}}
+{"type":"tsumo","actor":1,"pai":"N"}
+{"type":"dahai","actor":1,"pai":"N","tsumogiri":true,"meta":{"q_values":[-1.6608415,-1.6383805,-1.6520524,-1.755568,-1.8708024,-1.7223649,-1.5348649,-1.6852555,-1.2096696,0.060838193,-1.3708024],"mask_bits":5405643778,"is_greedy":true,"eval_time_ns":109934200}}
+{"type":"tsumo","actor":2,"pai":"3m"}
+{"type":"dahai","actor":2,"pai":"8m","tsumogiri":false,"meta":{"q_values":[-8.901633,-9.120383,-8.682883,-7.9953833,0.028053999,-8.932883,-8.839133,-8.948508,-8.917258,-7.9172583,-0.440696],"mask_bits":8644470972,"is_greedy":true,"eval_time_ns":286933400}}
+{"type":"tsumo","actor":3,"pai":"W"}
+{"type":"dahai","actor":3,"pai":"W","tsumogiri":true}
+{"type":"tsumo","actor":0,"pai":"W"}
+{"type":"dahai","actor":0,"pai":"W","tsumogiri":true,"meta":{"q_values":[-9.600808,-10.710183,-10.725808,-8.069558,-9.303933,-10.155496,-9.436746,-7.100808,-7.1867456,-0.2179954,-10.733621],"mask_bits":34897335319,"is_greedy":true,"eval_time_ns":299525300}}
+{"type":"tsumo","actor":1,"pai":"S"}
+{"type":"dahai","actor":1,"pai":"S","tsumogiri":true,"meta":{"q_values":[-1.7740669,-1.74477,-1.7740669,-1.90102,-1.9830513,-1.791645,-1.7310982,-1.80727,-1.298481,0.045269012,-1.5357857],"mask_bits":4600337410,"is_greedy":true,"eval_time_ns":110054000}}
+{"type":"tsumo","actor":2,"pai":"7p"}
+{"type":"dahai","actor":2,"pai":"C","tsumogiri":false,"meta":{"q_values":[-11.156073,-11.33576,-10.859198,-9.92951,-10.265448,-11.031073,-9.77326,-10.749823,-10.687323,-8.859198,-0.20294738],"mask_bits":8644503612,"is_greedy":true,"eval_time_ns":294706400}}
+{"type":"tsumo","actor":3,"pai":"4m"}
+{"type":"dahai","actor":3,"pai":"4m","tsumogiri":true}
+{"type":"tsumo","actor":0,"pai":"8p"}
+{"type":"dahai","actor":0,"pai":"2s","tsumogiri":false,"meta":{"q_values":[-0.6199219,-7.190234,-7.4636717,-0.8308594,-4.8542967,-6.5417967,-5.9011717,-2.7957032,0.12617183,-8.119922],"mask_bits":34360464407,"is_greedy":true,"eval_time_ns":288309400}}
+{"type":"chi","actor":1,"target":0,"pai":"2s","consumed":["3s","4s"],"meta":{"q_values":[0.09643555,-0.107910156],"mask_bits":35459249995776,"is_greedy":true,"eval_time_ns":106287500}}
+{"type":"dahai","actor":1,"pai":"8s","tsumogiri":false,"meta":{"q_values":[-1.6092682,-1.4715729,-1.5389557,-1.6991119,-1.8182526,-1.5496979,0.120224,-1.1981354],"mask_bits":4328756226,"is_greedy":true,"eval_time_ns":98357600}}
+{"type":"tsumo","actor":2,"pai":"C"}
+{"type":"dahai","actor":2,"pai":"C","tsumogiri":true,"meta":{"q_values":[-10.7549715,-7.512784,-10.5518465,-10.3955965,-10.2080965,-10.7705965,-9.731534,-9.278409,-10.028409,-4.262784,-0.184659],"mask_bits":8644503612,"is_greedy":true,"eval_time_ns":293819300}}
+{"type":"tsumo","actor":3,"pai":"6s"}
+{"type":"dahai","actor":3,"pai":"6s","tsumogiri":true}
+{"type":"tsumo","actor":0,"pai":"9s"}
+{"type":"dahai","actor":0,"pai":"9s","tsumogiri":true,"meta":{"q_values":[-7.578467,-10.898779,-10.836279,-7.1956544,-9.742529,-10.469091,-10.375341,-9.461279,-0.32456064,-10.937841],"mask_bits":34427048983,"is_greedy":true,"eval_time_ns":287240500}}
+{"type":"tsumo","actor":1,"pai":"7m"}
+{"type":"dahai","actor":1,"pai":"7m","tsumogiri":true,"meta":{"q_values":[-1.714325,0.17825317,-1.5766296,-1.5990906,-1.7045593,-1.8119812,-1.6156921,-1.5375671],"mask_bits":4295201858,"is_greedy":true,"eval_time_ns":107119800}}
+{"type":"tsumo","actor":2,"pai":"6p"}
+{"type":"dahai","actor":2,"pai":"3p","tsumogiri":false,"meta":{"q_values":[-6.815104,-5.518229,-7.096354,-5.4010415,0.14192712,-6.924479,-7.6041665,-7.065104,-0.15885413,-4.6041665,-0.0865885,-0.8932291],"mask_bits":137493538876,"is_greedy":true,"eval_time_ns":289285100}}
+{"type":"hora","actor":1,"target":2,"deltas":[0,5200,-4200,0],"ura_markers":[]}
+{"type":"end_kyoku"}
+{"type":"start_kyoku","bakaze":"E","dora_marker":"6p","kyoku":2,"honba":0,"kyotaku":0,"oya":1,"scores":[32700,30200,13100,24000],"tehais":[["P","2m","6s","5s","6s","F","9m","6p","6m","C","N","6m","9m"],["9s","7m","7p","7s","1m","W","2s","9s","2m","8p","1p","7p","8p"],["4s","S","9p","E","9p","S","6p","9p","3s","3s","1s","8p","2s"],["4s","N","2p","7s","7p","7m","8m","4s","2p","3p","3m","5m","1s"]]}
+{"type":"tsumo","actor":1,"pai":"2m"}
+{"type":"dahai","actor":1,"pai":"1p","tsumogiri":false,"meta":{"q_values":[-0.8319763,-1.1278747,-0.8759216,0.098687746,-1.1229919,-1.147406,-0.48187867,-0.97846067,-1.1063904,-0.06342163],"mask_bits":621380163,"is_greedy":true,"eval_time_ns":102130000}}
+{"type":"tsumo","actor":2,"pai":"5m"}
+{"type":"dahai","actor":2,"pai":"E","tsumogiri":false,"meta":{"q_values":[-1.675,-7.1203127,-9.096875,-8.971875,-8.995313,-9.596875,-9.39375,-8.909375,0.27031255,-7.1046877],"mask_bits":406798352,"is_greedy":true,"eval_time_ns":305916600}}
+{"type":"tsumo","actor":3,"pai":"5mr"}
+{"type":"dahai","actor":3,"pai":"1s","tsumogiri":false,"meta":{"q_values":[-9.167155,-7.8859053,-9.565593,-9.018718,-7.065593,-9.260905,-8.612468,0.28206372,-6.768718,-8.206218,-0.97379565,-8.503093],"mask_bits":18272783572,"is_greedy":true,"eval_time_ns":292689700}}
+{"type":"tsumo","actor":0,"pai":"2s"}
+{"type":"dahai","actor":0,"pai":"2s","tsumogiri":true,"meta":{"q_values":[-0.70214844,-6.8291016,-3.9111328,-2.1845703,0.60839844,-5.586914,-5.864258,-0.87109375,-0.44433594,-0.6386719,-1.3125],"mask_bits":16119251234,"is_greedy":true,"eval_time_ns":295529600}}
+{"type":"tsumo","actor":1,"pai":"5m"}
+{"type":"dahai","actor":1,"pai":"2s","tsumogiri":false,"meta":{"q_values":[-0.5897461,-1.259668,-1.2391602,-1.1444336,-1.306543,-1.275293,0.038671874,-1.1327149,-1.1727539,-0.07900391],"mask_bits":621379667,"is_greedy":true,"eval_time_ns":109415400}}
+{"type":"tsumo","actor":2,"pai":"4p"}
+{"type":"dahai","actor":2,"pai":"5m","tsumogiri":false,"meta":{"q_values":[0.124816895,-4.5040894,-8.773621,-7.937683,-8.398621,-4.418152,-6.843933,-2.7306519,-6.8517456,-7.3204956],"mask_bits":272584720,"is_greedy":true,"eval_time_ns":297570000}}
+{"type":"tsumo","actor":3,"pai":"W"}
+{"type":"dahai","actor":3,"pai":"N","tsumogiri":false,"meta":{"q_values":[-8.609619,-8.875244,-9.172119,-8.554932,-6.3674316,-8.734619,-8.640869,-8.867432,-3.699463,-2.293213,0.11694336,-10.015869],"mask_bits":18809392340,"is_greedy":true,"eval_time_ns":296768400}}
+{"type":"tsumo","actor":0,"pai":"5pr"}
+{"type":"dahai","actor":0,"pai":"2m","tsumogiri":false,"meta":{"q_values":[0.10968572,-7.452814,-3.8004706,-5.9762516,-6.7418766,-3.9918768,-0.003595531,-1.7203925,-1.7575018,-2.7711737,-7.859064],"mask_bits":50478465314,"is_greedy":true,"eval_time_ns":302627800}}
+{"type":"tsumo","actor":1,"pai":"W"}
+{"type":"dahai","actor":1,"pai":"5m","tsumogiri":false,"meta":{"q_values":[-0.83321804,-1.0597806,0.21170384,-0.72579616,-1.1408353,-1.1496243,0.08963352,-1.090054,-0.92892116],"mask_bits":620855379,"is_greedy":true,"eval_time_ns":106511200}}
+{"type":"tsumo","actor":2,"pai":"5sr"}
+{"type":"reach","actor":2,"meta":{"q_values":[-3.2129793,-7.533292,-6.6973543,-7.7911043,-8.603604,-8.947354,-8.439542,-9.056729,-7.220792,-8.916104,0.6151457],"mask_bits":206431014912,"is_greedy":true,"eval_time_ns":300279200}}
+{"type":"dahai","actor":2,"pai":"4p","tsumogiri":false,"meta":{"q_values":[0.43652344,-4.272461],"mask_bits":69632,"is_greedy":true,"eval_time_ns":287545200}}
+{"type":"reach_accepted","actor":2}
+{"type":"tsumo","actor":3,"pai":"9m"}
+{"type":"dahai","actor":3,"pai":"5m","tsumogiri":false,"meta":{"q_values":[-6.335612,0.03938806,-8.425456,-8.441081,-7.9567056,-8.144206,-8.558269,-8.683269,-8.300456,-8.253581,-2.0035806,-2.417643],"mask_bits":17735650772,"is_greedy":true,"eval_time_ns":291683000}}
+{"type":"tsumo","actor":0,"pai":"7p"}
+{"type":"dahai","actor":0,"pai":"N","tsumogiri":false,"meta":{"q_values":[-7.9154387,-6.782626,-8.977939,-8.571689,-9.001376,-8.368564,-0.17715728,-6.1185637,-6.49747,-6.7748137,-8.931064],"mask_bits":50478498080,"is_greedy":true,"eval_time_ns":291931200}}
+{"type":"tsumo","actor":1,"pai":"F"}
+{"type":"dahai","actor":1,"pai":"7m","tsumogiri":false,"meta":{"q_values":[-0.58114284,-0.8057522,-0.1993069,-1.2276273,-1.2969632,-0.9258694,-1.2725492,-0.7832913,-0.26766628],"mask_bits":4915822659,"is_greedy":true,"eval_time_ns":109440400}}
+{"type":"tsumo","actor":2,"pai":"C"}
+{"type":"dahai","actor":2,"pai":"C","tsumogiri":true}
+{"type":"tsumo","actor":3,"pai":"8s"}
+{"type":"dahai","actor":3,"pai":"5mr","tsumogiri":false,"meta":{"q_values":[-4.625366,-3.0238037,-6.9613037,-7.5863037,-7.219116,-8.562866,-8.203491,-7.594116,-8.703491,-8.039429,-0.7816162,-0.04333496],"mask_bits":17769205188,"is_greedy":true,"eval_time_ns":293515300}}
+{"type":"tsumo","actor":0,"pai":"4m"}
+{"type":"dahai","actor":0,"pai":"C","tsumogiri":false,"meta":{"q_values":[-7.6538305,-8.052268,-7.208518,-9.552268,-8.966331,-9.669456,-9.325706,-6.021018,-5.9038305,-0.08742452,-9.755393],"mask_bits":49404756264,"is_greedy":true,"eval_time_ns":290777600}}
+{"type":"tsumo","actor":1,"pai":"4m"}
+{"type":"dahai","actor":1,"pai":"F","tsumogiri":false,"meta":{"q_values":[-0.40677896,-0.8816325,-0.16825359,-1.1125895,-1.1702067,-0.5413005,-1.1526285,-0.83085126,-0.116984054],"mask_bits":4915822603,"is_greedy":true,"eval_time_ns":104642100}}
+{"type":"tsumo","actor":2,"pai":"C"}
+{"type":"dahai","actor":2,"pai":"C","tsumogiri":true}
+{"type":"tsumo","actor":3,"pai":"W"}
+{"type":"dahai","actor":3,"pai":"7m","tsumogiri":false,"meta":{"q_values":[-0.479581,-0.12997162,-5.7588778,-6.965909,-7.090909,-8.2862215,-7.5518465,-7.684659,-8.5362215,-7.575284,-0.31747162],"mask_bits":589336004,"is_greedy":true,"eval_time_ns":295011600}}
+{"type":"tsumo","actor":0,"pai":"8s"}
+{"type":"dahai","actor":0,"pai":"F","tsumogiri":false,"meta":{"q_values":[-6.719549,-6.168768,-4.8953304,-9.250799,-8.492987,-9.461737,-9.328924,-8.649237,-4.7898617,0.04216969,-9.360174],"mask_bits":40848376104,"is_greedy":true,"eval_time_ns":293091800}}
+{"type":"tsumo","actor":1,"pai":"5p"}
+{"type":"dahai","actor":1,"pai":"4m","tsumogiri":false,"meta":{"q_values":[-0.2495558,-0.7236769,-0.17777845,-0.74320817,-1.2383254,-1.2383254,-0.6489699,-1.1279738,-0.6147902],"mask_bits":620863499,"is_greedy":true,"eval_time_ns":104579500}}
+{"type":"tsumo","actor":2,"pai":"9s"}
+{"type":"dahai","actor":2,"pai":"9s","tsumogiri":true}
+{"type":"tsumo","actor":3,"pai":"F"}
+{"type":"dahai","actor":3,"pai":"F","tsumogiri":true,"meta":{"q_values":[-5.1064897,-5.442427,-8.079145,-9.133833,-9.899458,-9.15727,-9.610395,-9.805708,-9.352583,-4.723677,-0.12211466],"mask_bits":4884303236,"is_greedy":true,"eval_time_ns":285036300}}
+{"type":"tsumo","actor":0,"pai":"3m"}
+{"type":"dahai","actor":0,"pai":"4m","tsumogiri":false,"meta":{"q_values":[-3.3556461,0.16779125,-6.023615,-3.2814274,-8.972834,-8.590021,-8.660334,-8.074396,-7.699396,-1.63299,-8.965021],"mask_bits":36553408812,"is_greedy":true,"eval_time_ns":293609400}}
+{"type":"tsumo","actor":1,"pai":"N"}
+{"type":"dahai","actor":1,"pai":"N","tsumogiri":true,"meta":{"q_values":[-1.2725966,-1.5792372,-1.5557997,-1.7100966,-1.6700575,-1.4776747,-1.3761122,-1.372206,-0.123182505],"mask_bits":1694605315,"is_greedy":true,"eval_time_ns":105391000}}
+{"type":"tsumo","actor":2,"pai":"2p"}
+{"type":"dahai","actor":2,"pai":"2p","tsumogiri":true}
+{"type":"tsumo","actor":3,"pai":"4s"}
+{"type":"dahai","actor":3,"pai":"2p","tsumogiri":false,"meta":{"q_values":[-5.4035826,-5.95827,-7.844989,-0.14967656,-8.766864,-9.610614,-9.173114,-9.844989,-9.344989,-5.0715513],"mask_bits":589335940,"is_greedy":true,"eval_time_ns":293503200}}
+{"type":"tsumo","actor":0,"pai":"3m"}
+{"type":"dahai","actor":0,"pai":"3m","tsumogiri":true,"meta":{"q_values":[0.138623,-4.5137205,-2.7637208,-7.955127,-7.158252,-8.087939,-7.0098143,-7.1504393,-0.87309575,-7.908252],"mask_bits":36553408804,"is_greedy":true,"eval_time_ns":294147600}}
+{"type":"tsumo","actor":1,"pai":"F"}
+{"type":"dahai","actor":1,"pai":"F","tsumogiri":true,"meta":{"q_values":[-1.668118,-1.7540555,-1.6671414,-1.8595243,-1.7608914,-1.6349149,-1.5294461,-1.4698758,-0.15639919],"mask_bits":4915830787,"is_greedy":true,"eval_time_ns":112659100}}
+{"type":"tsumo","actor":2,"pai":"P"}
+{"type":"dahai","actor":2,"pai":"P","tsumogiri":true}
+{"type":"tsumo","actor":3,"pai":"9m"}
+{"type":"dahai","actor":3,"pai":"3m","tsumogiri":false,"meta":{"q_values":[-0.05041504,-4.968384,-7.44104,-1.2496338,-8.245728,-8.073853,-9.042603,-9.761353,-9.06604,-5.3199463],"mask_bits":589335940,"is_greedy":true,"eval_time_ns":285848600}}
+{"type":"tsumo","actor":0,"pai":"4p"}
+{"type":"dahai","actor":0,"pai":"3m","tsumogiri":false,"meta":{"q_values":[0.19016337,-8.80593,-8.094993,-3.4621804,-9.610618,-8.813743,-9.938743,-9.438743,-8.563743,-1.2590554,-9.344993],"mask_bits":36553412900,"is_greedy":true,"eval_time_ns":292521000}}
+{"type":"tsumo","actor":1,"pai":"5p"}
+{"type":"reach","actor":1,"meta":{"q_values":[-0.70996094,-1.0878906,-1.2822266,-1.1445312,-1.2099609,0.06933594,-1.1533203,-1.1113281,0.38671875],"mask_bits":138059816963,"is_greedy":true,"eval_time_ns":105848600}}
+{"type":"dahai","actor":1,"pai":"7s","tsumogiri":false,"meta":{"q_values":[-0.24084473,0.3380127],"mask_bits":16777217,"is_greedy":true,"eval_time_ns":109338400}}
+{"type":"reach_accepted","actor":1}
+{"type":"tsumo","actor":2,"pai":"P"}
+{"type":"dahai","actor":2,"pai":"P","tsumogiri":true}
+{"type":"tsumo","actor":3,"pai":"1p"}
+{"type":"dahai","actor":3,"pai":"7s","tsumogiri":false,"meta":{"q_values":[-2.4294677,-6.900171,-4.5837646,-7.4275146,-9.029078,-8.677515,-7.5212646,-0.017358422,-7.669702,-3.466577],"mask_bits":589336448,"is_greedy":true,"eval_time_ns":298911800}}
+{"type":"tsumo","actor":0,"pai":"E"}
+{"type":"dahai","actor":0,"pai":"P","tsumogiri":false,"meta":{"q_values":[-9.806818,-8.775568,-9.181818,-10.681818,-10.119318,-10.666193,-10.634943,-9.744318,-4.9083805,-0.24431825,-10.7052555],"mask_bits":36687630624,"is_greedy":true,"eval_time_ns":283368400}}
+{"type":"tsumo","actor":1,"pai":"5p"}
+{"type":"dahai","actor":1,"pai":"5p","tsumogiri":true}
+{"type":"tsumo","actor":2,"pai":"8s"}
+{"type":"dahai","actor":2,"pai":"8s","tsumogiri":true}
+{"type":"tsumo","actor":3,"pai":"3p"}
+{"type":"dahai","actor":3,"pai":"8s","tsumogiri":false,"meta":{"q_values":[-6.276964,-8.382433,-6.0621204,-3.823839,-9.069933,-9.210558,-7.7339954,-0.10508895,-5.960558],"mask_bits":572559232,"is_greedy":true,"eval_time_ns":288977800}}
+{"type":"tsumo","actor":0,"pai":"5s"}
+{"type":"dahai","actor":0,"pai":"8s","tsumogiri":false,"meta":{"q_values":[-9.034961,-8.699023,-7.6208982,-8.855273,-9.464648,-9.074023,-9.245898,0.043164015,-5.0583982,-1.8357422],"mask_bits":34540146976,"is_greedy":true,"eval_time_ns":279501500}}
+{"type":"tsumo","actor":1,"pai":"7s"}
+{"type":"dahai","actor":1,"pai":"7s","tsumogiri":true}
+{"type":"tsumo","actor":2,"pai":"S"}
+{"type":"dahai","actor":2,"pai":"S","tsumogiri":true}
+{"type":"tsumo","actor":3,"pai":"C"}
+{"type":"dahai","actor":3,"pai":"C","tsumogiri":true,"meta":{"q_values":[-7.36735,-8.711101,-6.2189126,-3.472819,-9.172038,-9.593913,-8.265788,-7.2189126,-0.07047528],"mask_bits":9128939392,"is_greedy":true,"eval_time_ns":298247400}}
+{"type":"tsumo","actor":0,"pai":"4p"}
+{"type":"dahai","actor":0,"pai":"5pr","tsumogiri":false,"meta":{"q_values":[-8.191189,-7.5193143,-6.5857205,-8.402126,-9.128689,-6.3318143,-8.675564,-1.9236112,-0.015408039],"mask_bits":34506592544,"is_greedy":true,"eval_time_ns":288889600}}
+{"type":"tsumo","actor":1,"pai":"1p"}
+{"type":"dahai","actor":1,"pai":"1p","tsumogiri":true}
+{"type":"tsumo","actor":2,"pai":"1m"}
+{"type":"dahai","actor":2,"pai":"1m","tsumogiri":true}
+{"type":"hora","actor":1,"target":2,"deltas":[0,20000,-18000,0],"ura_markers":["8s"]}
+{"type":"end_kyoku"}
+{"type":"end_game"}
+    `.trim().split('\n').map(s => JSON.parse(s))
+    resourceDir = "files";
+  </script>
+  <script src="files/js/archive_player.js"></script>
+</head><body>
+  <div class="board">
+    <div id="players" class="repeated player">
+      <div class="ho">
+        <div id="players.hoRows" class="repeated pai-row">
+          <img id="players.hoRows.pais" class="repeated">
+        </div>
+      </div>
+      <div class="tehai-container pai-row">
+        <img id="players.tehais" class="repeated">
+        <img id="players.tsumoPai" class="tsumo-pai">
+      </div>
+      <div class="furo-container pai-row">
+        <span id="players.furos" class="repeated">
+          <img id="players.furos.pais" class="repeated">
+        </span>
+      </div>
+      <div class="player-footer"></div>
+    </div>
+    <div class="wanpais-container">
+      <img id="wanpais" class="repeated">
+    </div>
+  </div>
+
+  <div class="controller-container">
+    <div>
+      <select id="kyokuSelector"></select>
+    </div>
+    <div>
+      <button id="prev-button">Prev</button>
+      <button id="next-button">Next</button>
+      <input id="action-id-label" type="text" size="3" value="0">
+      <button id="go-button">Go</button>
+      <button id="last-button" style="margin-left: 1em;">Last</button>
+    </div>
+    <table border="0">
+      <tr>
+        <th>#</th>
+        <th>Name</th>
+        <th>Score</th>
+        <th><button id="viewpoint-button">Viewpoint</button></th>
+      </tr>
+      <tr id="playerInfos" class="repeated">
+        <td id="playerInfos.index"></td>
+        <td id="playerInfos.name"></td>
+        <td id="playerInfos.score"></td>
+        <td id="playerInfos.viewpoint"></td>
+      </tr>
+    </table>
+    <div><pre id="action-label"></pre></div>
+    <div id="log-label" class="log-label"></div>
+  </div>
+
+</body></html>

@@ -1,0 +1,166 @@
+# This is only an example. Most values are dummy placeholders just to match the
+# types; they are often not optimal and must be tuned.
+
+[control]
+version = 4
+online = false
+
+state_file = '/path/to/mortal.pth'
+best_state_file = '/path/to/best.pth'
+tensorboard_dir = '/path/to/dir'
+
+device = 'cuda:0'
+enable_cudnn_benchmark = false
+enable_amp = false
+enable_compile = false
+
+batch_size = 512
+opt_step_every = 1
+
+save_every = 400
+test_every = 20000
+submit_every = 400
+
+# using env `TRAIN_PLAY_PROFILE`
+[train_play.default]
+games = 800
+log_dir = '/path/to/train_play'
+boltzmann_epsilon = 0.005
+boltzmann_temp = 0.05
+top_p = 1.0
+repeats = 1
+
+[test_play]
+games = 3000
+log_dir = '/path/to/test_play'
+
+[dataset]
+globs = ['/path/to/dataset/**/*.json.gz']
+file_index = '/path/to/file_index.pth'
+file_batch_size = 15
+reserve_ratio = 0.0
+num_workers = 1
+player_names_files = []
+num_epochs = 1
+enable_augmentation = false
+augmented_first = false
+
+[env]
+gamma = 1
+pts = [6.0, 4.0, 2.0, 0.0]
+
+[resnet]
+conv_channels = 192
+num_blocks = 40
+
+[cql]
+min_q_weight = 5
+
+[aux]
+next_rank_weight = 0.2
+
+[freeze_bn]
+# `true` in online training
+mortal = false
+
+[optim]
+eps = 1e-8
+betas = [0.9, 0.999]
+weight_decay = 0.1
+max_grad_norm = 0
+
+[optim.scheduler]
+peak = 1e-4
+final = 1e-4
+warm_up_steps = 0
+max_steps = 0
+
+[baseline.train]
+device = 'cuda:0'
+enable_compile = false
+state_file = '/path/to/baseline.pth'
+
+[baseline.test]
+device = 'cuda:0'
+enable_compile = false
+state_file = '/path/to/baseline.pth'
+
+[online]
+history_window = 50
+enable_compile = false
+
+[online.remote]
+host = '127.0.0.1'
+port = 5000
+
+[online.server]
+buffer_dir = '/path/to/buffer'
+drain_dir = '/path/to/drain'
+sample_reuse_rate = 0
+sample_reuse_threshold = 0
+capacity = 1600
+force_sequential = false
+
+[1v3]
+seed_key = -1
+games_per_iter = 2000
+iters = 500
+log_dir = '/path/to/1v3'
+
+[1v3.challenger]
+device = 'cuda:0'
+name = 'mortal'
+state_file = '/path/to/challenger.pth'
+stochastic_latent = false
+enable_compile = false
+enable_amp = true
+enable_rule_based_agari_guard = true
+
+[1v3.champion]
+device = 'cuda:0'
+name = 'baseline'
+state_file = '/path/to/baseline.pth'
+stochastic_latent = false
+enable_compile = false
+enable_amp = true
+enable_rule_based_agari_guard = true
+
+[1v3.akochan]
+enabled = false
+dir = '/path/to/akochan'
+tactics = '/path/to/tactics.json'
+
+[grp]
+state_file = '/path/to/grp.pth'
+
+[grp.network]
+hidden_size = 64
+num_layers = 2
+
+[grp.control]
+device = 'cuda:0'
+enable_cudnn_benchmark = false
+tensorboard_dir = 'grp_v2/log'
+
+batch_size = 512
+save_every = 2000
+val_steps = 400
+
+[grp.dataset]
+train_globs = [
+    '/path/to/dataset/2019/**/*.json.gz',
+    '/path/to/dataset/2020/**/*.json.gz',
+    '/path/to/dataset/2021/01/**/*.json.gz',
+    '/path/to/dataset/2021/02/**/*.json.gz',
+    # ...
+]
+val_globs = [
+    '/path/to/dataset/2021/10/**/*.json.gz',
+    '/path/to/dataset/2021/11/**/*.json.gz',
+    # ...
+]
+file_index = '/path/to/grp_file_index.pth'
+file_batch_size = 50
+
+[grp.optim]
+lr = 1e-5
