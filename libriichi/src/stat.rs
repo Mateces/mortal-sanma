@@ -202,8 +202,8 @@ Nagashi mangan (rate) {} ({:.9})"#,
             self.tobi,
             self.tobi_rate(),
             self.avg_rank(),
-            self.total_pt([90, 45, 0, -135]),
-            self.avg_pt([90, 45, 0, -135]),
+            self.total_pt([90, 0, -90]),
+            self.avg_pt([90, 0, -90]),
             self.point,
             self.avg_point_per_game(),
             self.avg_point_per_round(),
@@ -266,7 +266,7 @@ impl Stat {
             ..Default::default()
         };
 
-        let mut cur_scores = [0; 4];
+        let mut cur_scores = [0; 3];
         let mut riichi_declared = false;
         let mut riichi_accepted = false;
         let mut others_riichi_declared = false;
@@ -508,19 +508,19 @@ impl Stat {
 
     #[inline]
     #[must_use]
-    pub const fn total_pt(&self, pts: [i64; 4]) -> i64 {
-        self.rank_1 * pts[0] + self.rank_2 * pts[1] + self.rank_3 * pts[2] + self.rank_4 * pts[3]
+    pub const fn total_pt(&self, pts: [i64; 3]) -> i64 {
+        self.rank_1 * pts[0] + self.rank_2 * pts[1] + self.rank_3 * pts[2]
     }
     #[inline]
     #[must_use]
-    pub fn avg_pt(&self, pts: [i64; 4]) -> f64 {
+    pub fn avg_pt(&self, pts: [i64; 3]) -> f64 {
         self.total_pt(pts) as f64 / self.game as f64
     }
     #[getter]
     #[inline]
     #[must_use]
     pub fn avg_rank(&self) -> f64 {
-        self.avg_pt([1, 2, 3, 4])
+        self.avg_pt([1, 2, 3])
     }
     #[getter]
     #[inline]

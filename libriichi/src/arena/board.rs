@@ -33,10 +33,10 @@ pub struct Board {
     pub honba: u8,
     /// Does not effect the kyoku seed
     pub kyotaku: u8,
-    /// [25000; 4]
-    pub scores: [i32; 4],
+    /// [35000; 3] (sanma default starting scores)
+    pub scores: [i32; 3],
 
-    pub haipai: [[Tile; 13]; 4],
+    pub haipai: [[Tile; 13]; 3],
     /// Goes backward (pop)
     pub yama: Vec<Tile>,
     /// Goes backward (pop)
@@ -53,12 +53,12 @@ pub struct BoardState {
     board: Board,
     // Absolute seat, with the oya of E1 always being 0
     oya: u8,
-    player_states: [PlayerState; 4],
+    player_states: [PlayerState; 3],
 
     can_renchan: bool,
     has_hora: bool,
     has_abortive_ryukyoku: bool,
-    kyoku_deltas: [i32; 4],
+    kyoku_deltas: [i32; 3],
 
     #[derivative(Default(value = "70"))]
     tiles_left: u8,
@@ -68,15 +68,15 @@ pub struct BoardState {
     need_new_dora_at_discard: Option<()>,
     need_new_dora_at_tsumo: Option<()>,
     riichi_to_be_accepted: Option<u8>,
-    #[derivative(Default(value = "[true; 4]"))]
-    can_nagashi_mangan: [bool; 4],
+    #[derivative(Default(value = "[true; 3]"))]
+    can_nagashi_mangan: [bool; 3],
     #[derivative(Default(value = "true"))]
     can_four_wind: bool,
     four_wind_tile: Option<Tile>,
     accepted_riichis: u8,
     kans: u8,
     check_four_kan: bool,
-    paos: [Option<u8>; 4],
+    paos: [Option<u8>; 3],
 
     log: Vec<EventExt>,
 
@@ -85,7 +85,7 @@ pub struct BoardState {
 }
 
 pub struct AgentContext<'a> {
-    pub player_states: &'a [PlayerState; 4],
+    pub player_states: &'a [PlayerState; 3],
     pub log: &'a [EventExt],
 }
 
@@ -109,7 +109,7 @@ impl Board {
         seq.shuffle(&mut rng);
 
         self.haipai = array::from_fn(|i| seq[i * 13..(i + 1) * 13].try_into().unwrap());
-        let mut idx = 13 * 4;
+        let mut idx = 13 * 3;
 
         self.rinshan = seq[idx..idx + 4].to_vec();
         idx += 4;
@@ -117,13 +117,13 @@ impl Board {
         idx += 5;
         self.ura_indicators = seq[idx..idx + 5].to_vec();
         idx += 5;
-        self.yama = seq[idx..idx + 70].to_vec();
-        idx += 70;
-        assert_eq!(idx, seq.len());
+        // Sanma: 108 - 39(haipai) - 14(wanpai) = 55 drawable tiles
+        self.yama = seq[idx..].to_vec();
+        assert_eq!(idx + self.yama.len(), seq.len());
     }
 
     pub fn into_state(self) -> BoardState {
-        let oya = self.kyoku % 4;
+        let oya = self.kyoku % 3;
         let dora_indicators_full = self.dora_indicators.clone();
 
         BoardState {
@@ -138,7 +138,7 @@ impl Board {
 
 impl BoardState {
     /// Returns iff any player on the board can act or the kyoku has ended.
-    pub fn poll(&mut self, mut reactions: [EventExt; 4]) -> Result<Poll> {
+    pub fn poll(&mut self, mut reactions: [EventExt; 3]) -> Result<Poll> {
         loop {
             let poll = self.step(&reactions)?;
             match poll {
@@ -204,7 +204,7 @@ impl BoardState {
     }
 
     fn haipai(&mut self) -> Result<()> {
-        let bakaze = must_tile!(tu8!(E) + self.board.kyoku / 4);
+        let bakaze = must_tile!(tu8!(E) + self.board.kyoku / 3);
         let start_kyoku = Event::StartKyoku {
             bakaze,
             dora_marker: self
@@ -239,7 +239,7 @@ impl BoardState {
     }
 
     fn exhaustive_ryukyoku(&mut self) {
-        let mut deltas = [0; 4];
+        let mut deltas = [0; 3];
         self.can_renchan = self.player_states[self.oya as usize].shanten() == 0;
 
         let mut has_nagashi_mangan = false;
@@ -367,7 +367,7 @@ impl BoardState {
         &mut self,
         single_actor: u8,
         single_target: u8,
-        reactions: &[EventExt; 4],
+        reactions: &[EventExt; 3],
     ) -> Result<()> {
         self.has_hora = true;
 
@@ -403,7 +403,7 @@ impl BoardState {
                 .take(3)
                 .filter_map(|(actor, v)| v.map(|point| (actor, point)))
                 .for_each(|(actor, point)| {
-                    let mut deltas = [0; 4];
+                    let mut deltas = [0; 3];
                     if let Some(pao_target) = self.paos[actor] {
                         // As per [Tenhou's rule](https://tenhou.net/man/#RULE):
                         //
@@ -439,7 +439,7 @@ impl BoardState {
         }
 
         let point = points[single_actor as usize].unwrap();
-        let mut deltas = [0; 4];
+        let mut deltas = [0; 3];
         if let Some(pao_target) = self.paos[single_actor as usize] {
             // For pao to happen, the agari must have at least 1 yakuman so ron
             // point and sum of tsumo point should be equal.
@@ -503,20 +503,20 @@ impl BoardState {
     #[inline]
     fn abortive_ryukyoku(&mut self) {
         let ryukyoku = Event::Ryukyoku {
-            deltas: Some([0; 4]),
+            deltas: Some([0; 3]),
         };
         self.add_log_no_meta(ryukyoku);
         self.has_abortive_ryukyoku = true;
         // No need to broadcast
     }
 
-    fn step(&mut self, reactions: &[EventExt; 4]) -> Result<Poll> {
-        if self.tiles_left == 70 {
+    fn step(&mut self, reactions: &[EventExt; 3]) -> Result<Poll> {
+        if self.tiles_left == 55 {
             self.haipai()?;
             return Ok(Poll::InGame);
         }
 
-        if self.accepted_riichis == 4 {
+        if self.accepted_riichis == 3 {
             // 四家立直
             self.abortive_ryukyoku();
             return Ok(Poll::End);
@@ -593,7 +593,7 @@ impl BoardState {
 
                 self.broadcast(&ev.event);
                 self.add_log(ev.clone());
-                self.tsumo_actor = (actor + 1) % 4;
+                self.tsumo_actor = (actor + 1) % 3;
 
                 // 四風連打
                 if self.can_four_wind && self.check_four_wind(pai)? {
@@ -784,17 +784,11 @@ impl BoardState {
     }
 }
 
+/// Sanma: 108 tiles. No 2m-8m. Red dora: 0 red 5m (doesn't exist), 1 red 5p, 1 red 5s.
 #[rustfmt::skip]
-const UNSHUFFLED: [Tile; 136] = [
-    t!(1m),  t!(1m), t!(1m), t!(1m),
-    t!(2m),  t!(2m), t!(2m), t!(2m),
-    t!(3m),  t!(3m), t!(3m), t!(3m),
-    t!(4m),  t!(4m), t!(4m), t!(4m),
-    t!(5mr), t!(5m), t!(5m), t!(5m),
-    t!(6m),  t!(6m), t!(6m), t!(6m),
-    t!(7m),  t!(7m), t!(7m), t!(7m),
-    t!(8m),  t!(8m), t!(8m), t!(8m),
-    t!(9m),  t!(9m), t!(9m), t!(9m),
+const UNSHUFFLED: [Tile; 108] = [
+    t!(1m), t!(1m), t!(1m), t!(1m),
+    t!(9m), t!(9m), t!(9m), t!(9m),
 
     t!(1p),  t!(1p), t!(1p), t!(1p),
     t!(2p),  t!(2p), t!(2p), t!(2p),

@@ -22,8 +22,8 @@ use tinyvec::array_vec;
 pub struct Grp {
     // [grand_kyoku, honba, kyotaku, [score[i] / 10000]] where i is player_id
     pub feature: Array2<f64>,
-    pub rank_by_player: [u8; 4],
-    pub final_scores: [i32; 4],
+    pub rank_by_player: [u8; 3],
+    pub final_scores: [i32; 3],
 }
 
 #[pymethods]
@@ -48,10 +48,10 @@ impl Grp {
     pub fn take_feature<'py>(&mut self, py: Python<'py>) -> Bound<'py, PyArray2<f64>> {
         PyArray2::from_owned_array(py, mem::take(&mut self.feature))
     }
-    pub const fn take_rank_by_player(&self) -> [u8; 4] {
+    pub const fn take_rank_by_player(&self) -> [u8; 3] {
         self.rank_by_player
     }
-    pub const fn take_final_scores(&self) -> [i32; 4] {
+    pub const fn take_final_scores(&self) -> [i32; 3] {
         self.final_scores
     }
 }
@@ -90,8 +90,8 @@ impl Grp {
     pub fn load_events(events: &[Event]) -> Result<Self> {
         let mut game_info = vec![];
         let mut rank_by_player_opt = None;
-        let mut final_deltas = [0; 4];
-        let mut final_scores = [0; 4];
+        let mut final_deltas = [0; 3];
+        let mut final_scores = [0; 3];
 
         for ev in events.iter().rev() {
             match *ev {

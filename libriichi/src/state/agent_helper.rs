@@ -236,7 +236,7 @@ impl PlayerState {
 
             // At all-last, we are the last and we are not oya. If even a
             // haneman tsumo cannot let us avoid the last, then do not ryukyoku.
-            let mut scores = [-3000 - self.honba as i32 * 300; 4];
+            let mut scores = [-3000 - self.honba as i32 * 300; 3];
             scores[0] = 12000 + self.kyotaku as i32 * 1000 + self.honba as i32 * 300;
             scores[self.oya as usize] = -6000 - self.honba as i32 * 300;
             vec_add_assign(&mut scores, &self.scores);

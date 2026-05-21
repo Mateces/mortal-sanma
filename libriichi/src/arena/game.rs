@@ -12,7 +12,7 @@ use ndarray::prelude::*;
 pub struct BatchGame {
     /// 8 for hanchan and 4 for tonpuu
     pub length: u8,
-    pub init_scores: [i32; 4],
+    pub init_scores: [i32; 3],
     pub disable_progress_bar: bool,
 }
 
@@ -28,18 +28,18 @@ pub struct Index {
 struct Game {
     length: u8,
     seed: (u64, u64),
-    indexes: [Index; 4],
+    indexes: [Index; 3],
 
-    oracle_obs_versions: [Option<u32>; 4],
-    invisible_state_cache: [Option<Array2<f32>>; 4],
+    oracle_obs_versions: [Option<u32>; 3],
+    invisible_state_cache: [Option<Array2<f32>>; 3],
 
-    last_reactions: [EventExt; 4], // cached for poll phase
+    last_reactions: [EventExt; 3], // cached for poll phase
 
     board: BoardState,
     kyoku: u8,
     honba: u8,
     kyotaku: u8,
-    scores: [i32; 4],
+    scores: [i32; 3],
     game_log: Vec<Vec<EventExt>>,
 
     kyoku_started: bool,
@@ -152,7 +152,7 @@ impl Game {
                 // 2. is at all-last
                 // 3. oya has at least 30000
                 // 4. oya is the top
-                let oya = kyoku_result.kyoku as usize % 4;
+                let oya = kyoku_result.kyoku as usize % 3;
                 if kyoku_result.kyoku >= self.length - 1 && self.scores[oya] >= 30000 {
                     let top = kyoku_result
                         .scores
@@ -222,7 +222,7 @@ impl BatchGame {
     pub const fn tenhou_hanchan(disable_progress_bar: bool) -> Self {
         Self {
             length: 8,
-            init_scores: [25000; 4],
+            init_scores: [35000; 3],
             disable_progress_bar,
         }
     }
@@ -230,7 +230,7 @@ impl BatchGame {
     pub fn run(
         &self,
         agents: &mut [Box<dyn BatchAgent>],
-        indexes: &[[Index; 4]],
+        indexes: &[[Index; 3]],
         seeds: &[(u64, u64)],
     ) -> Result<Vec<GameResult>> {
         ensure!(!agents.is_empty());
@@ -247,7 +247,7 @@ impl BatchGame {
             .zip(seeds)
             .enumerate()
             .map(|(game_idx, (idxs, &seed))| {
-                let mut oracle_obs_versions = [None; 4];
+                let mut oracle_obs_versions = [None; 3];
                 for (i, idx) in idxs.iter().enumerate() {
                     agents[idx.agent_idx].start_game(idx.player_id_idx)?;
                     oracle_obs_versions[i] = agents[idx.agent_idx].oracle_obs_version();

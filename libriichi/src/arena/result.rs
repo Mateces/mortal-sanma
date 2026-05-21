@@ -12,13 +12,13 @@ pub struct KyokuResult {
     pub has_hora: bool,
     pub has_abortive_ryukyoku: bool,
     pub kyotaku_left: u8,
-    pub scores: [i32; 4],
+    pub scores: [i32; 3],
 }
 
 #[derive(Debug, Clone, Default)]
 pub struct GameResult {
-    pub names: [String; 4],
-    pub scores: [i32; 4],
+    pub names: [String; 3],
+    pub scores: [i32; 3],
     pub seed: (u64, u64),
     pub game_log: Vec<Vec<EventExt>>,
 }

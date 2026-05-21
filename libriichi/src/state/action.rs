@@ -37,6 +37,9 @@ pub struct ActionCandidate {
     pub can_ryukyoku: bool,
 
     #[pyo3(get)]
+    pub can_nukidora: bool,
+
+    #[pyo3(get)]
     pub target_actor: u8,
 }
 
@@ -81,6 +84,7 @@ impl ActionCandidate {
             || self.can_riichi
             || self.can_agari()
             || self.can_ryukyoku
+            || self.can_nukidora
     }
 
     fn __repr__(&self) -> String {
@@ -137,7 +141,7 @@ impl PlayerState {
                 pai,
                 consumed,
             } => {
-                ensure!((target + 1) % 4 == actor, "chi from non-kamicha");
+                ensure!((target + 1) % 3 == actor, "chi from non-kamicha");
                 ensure!(
                     matches!(self.last_kawa_tile, Some(tile) if tile == pai),
                     "chi target is not the last kawa tile",
@@ -200,6 +204,11 @@ impl PlayerState {
                 } else {
                     ensure!(cans.can_ron_agari, "cannot ron agari");
                 }
+            }
+
+            Event::Nukidora { pai, .. } => {
+                ensure!(cans.can_nukidora, "cannot nukidora");
+                self.ensure_tiles_in_hand(&[pai])?;
             }
 
             Event::None => return Ok(()),

@@ -63,7 +63,7 @@ pub struct PlayerState {
     pub(super) honba: u8,
     pub(super) kyotaku: u8,
     /// Rotated to be relative, so `scores[0]` is the score of the player.
-    pub(super) scores: [i32; 4],
+    pub(super) scores: [i32; 3],
     pub(super) rank: u8,
     /// Relative to `player_id`.
     pub(super) oya: u8,
@@ -77,19 +77,19 @@ pub struct PlayerState {
     ///
     /// Reference:
     /// <https://detail.chiebukuro.yahoo.co.jp/qa/question_detail/q1020002370>
-    pub(super) kawa: [TinyVec<[Option<KawaItem>; 24]>; 4],
-    pub(super) last_tedashis: [Option<Sutehai>; 4],
-    pub(super) riichi_sutehais: [Option<Sutehai>; 4],
+    pub(super) kawa: [TinyVec<[Option<KawaItem>; 24]>; 3],
+    pub(super) last_tedashis: [Option<Sutehai>; 3],
+    pub(super) riichi_sutehais: [Option<Sutehai>; 3],
 
     /// Using 34-D arrays here may be more efficient, but I don't want to mess up
     /// with aka doras.
-    pub(super) kawa_overview: [ArrayVec<[Tile; 24]>; 4],
-    pub(super) fuuro_overview: [ArrayVec<[ArrayVec<[Tile; 4]>; 4]>; 4],
+    pub(super) kawa_overview: [ArrayVec<[Tile; 24]>; 3],
+    pub(super) fuuro_overview: [ArrayVec<[ArrayVec<[Tile; 4]>; 4]>; 3],
     /// In this field all `Tile` are deaka'd.
-    pub(super) ankan_overview: [ArrayVec<[Tile; 4]>; 4],
+    pub(super) ankan_overview: [ArrayVec<[Tile; 4]>; 3],
 
-    pub(super) riichi_declared: [bool; 4],
-    pub(super) riichi_accepted: [bool; 4],
+    pub(super) riichi_declared: [bool; 3],
+    pub(super) riichi_accepted: [bool; 3],
 
     pub(super) at_turn: u8,
     pub(super) tiles_left: u8,
@@ -126,7 +126,7 @@ pub struct PlayerState {
 
     /// Including aka, originally for agari calc usage but also encoded as a
     /// feature to the obs.
-    pub(super) doras_owned: [u8; 4],
+    pub(super) doras_owned: [u8; 3],
     pub(super) doras_seen: u8,
 
     pub(super) akas_in_hand: [bool; 3],
@@ -145,7 +145,7 @@ impl PlayerState {
     #[new]
     #[must_use]
     pub fn new(player_id: u8) -> Self {
-        assert!(player_id < 4, "{player_id} is not in range [0, 3]");
+        assert!(player_id < 3, "{player_id} is not in range [0, 2]");
         Self {
             player_id,
             ..Default::default()
@@ -184,19 +184,16 @@ impl PlayerState {
             .chain(iter::repeat(&None))
             .zip(self.kawa[1].iter().chain(iter::repeat(&None)))
             .zip(self.kawa[2].iter().chain(iter::repeat(&None)))
-            .zip(self.kawa[3].iter().chain(iter::repeat(&None)))
-            .take_while(|row| !matches!(row, &(((None, None), None), None)))
+            .take_while(|row| !matches!(row, &((None, None), None)))
             .enumerate()
-            .map(|(i, (((a, b), c), d))| {
+            .map(|(i, ((a, b), c))| {
                 format!(
-                    "{i:2}. {}\t{}\t{}\t{}",
+                    "{i:2}. {}\t{}\t{}",
                     a.as_ref()
                         .map_or_else(|| "-".to_owned(), |item| item.to_string()),
                     b.as_ref()
                         .map_or_else(|| "-".to_owned(), |item| item.to_string()),
                     c.as_ref()
-                        .map_or_else(|| "-".to_owned(), |item| item.to_string()),
-                    d.as_ref()
                         .map_or_else(|| "-".to_owned(), |item| item.to_string()),
                 )
             })

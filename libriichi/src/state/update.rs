@@ -115,6 +115,8 @@ impl PlayerState {
             Event::Reach { actor } => self.reach(actor),
             Event::ReachAccepted { actor } => self.reach_accepted(actor),
 
+            Event::Nukidora { actor, pai } => self.nukidora(actor, pai)?,
+
             _ => (),
         };
 
@@ -130,8 +132,8 @@ impl PlayerState {
         honba: u8,
         kyotaku: u8,
         oya: u8,
-        scores: [i32; 4],
-        tehais: [[Tile; 13]; 4],
+        scores: [i32; 3],
+        tehais: [[Tile; 13]; 3],
     ) -> Result<()> {
         self.tehai.fill(0);
         self.waits.fill(false);
@@ -147,11 +149,11 @@ impl PlayerState {
         self.honba = honba;
         self.kyotaku = kyotaku;
         self.oya = self.rel(oya) as u8;
-        self.jikaze = must_tile!(tu8!(E) + (4 - self.oya) % 4);
+        self.jikaze = must_tile!(tu8!(E) + (3 - self.oya) % 3);
         self.kyoku = kyoku - 1;
         self.is_all_last = match self.bakaze.as_u8() {
             tu8!(E) => false,
-            tu8!(S) => self.kyoku == 3,
+            tu8!(S) => self.kyoku == 2,
             _ => true,
         };
 
@@ -183,7 +185,7 @@ impl PlayerState {
         self.kans_on_board = 0;
         self.tehai_len_div3 = 4;
         self.has_next_shanten_discard = false;
-        self.tiles_left = 70;
+        self.tiles_left = 55;
         self.at_turn = 0;
 
         self.kawa.iter_mut().for_each(|k| k.clear());
@@ -686,7 +688,7 @@ impl PlayerState {
     }
 
     pub(super) const fn rel(&self, actor: u8) -> usize {
-        ((actor + 4 - self.player_id) % 4) as usize
+        ((actor + 3 - self.player_id) % 3) as usize
     }
 
     /// Updates `tiles_seen`, `doras_seen` and `akas_seen`.
@@ -791,7 +793,7 @@ impl PlayerState {
         self.doras_owned[0] += self.tehai[next.as_usize()];
 
         // Count new dora in everyone's fuuro
-        for i in 0..4 {
+        for i in 0..3 {
             self.doras_owned[i] += self.fuuro_overview[i]
                 .iter()
                 .flatten()
@@ -808,11 +810,11 @@ impl PlayerState {
     }
 
     pub(super) fn pad_kawa_for_pon_or_daiminkan(&mut self, abs_actor: u8, abs_target: u8) {
-        let mut i = (abs_target + 1) % 4;
+        let mut i = (abs_target + 1) % 3;
         while i != abs_actor {
             let rel = self.rel(i);
             self.kawa[rel].push(None);
-            i = (i + 1) % 4;
+            i = (i + 1) % 3;
         }
     }
 
@@ -963,7 +965,24 @@ impl PlayerState {
         self.rank = self.get_rank(self.scores);
     }
 
-    pub(super) fn get_rank(&self, mut scores_rel: [i32; 4]) -> u8 {
+    /// Sanma: declare a North tile as bonus dora (抜きドラ).
+    /// The tile is removed from hand, player draws a replacement tile (rinshan).
+    fn nukidora(&mut self, actor: u8, pai: Tile) -> Result<()> {
+        let actor_rel = self.rel(actor);
+        if actor_rel == 0 {
+            self.move_tile(pai, MoveType::FuuroConsume)?;
+            self.at_rinshan = true;
+            // nukidora counts as a bonus dora for the player
+            self.doras_owned[0] += 1;
+        } else {
+            self.witness_tile(pai)?;
+            self.update_doras_owned(actor_rel, pai);
+        }
+        self.can_w_riichi = false;
+        Ok(())
+    }
+
+    pub(super) fn get_rank(&self, mut scores_rel: [i32; 3]) -> u8 {
         let scores_abs = {
             scores_rel.rotate_right(self.player_id as usize);
             scores_rel
