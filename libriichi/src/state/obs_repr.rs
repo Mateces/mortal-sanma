@@ -89,7 +89,7 @@ impl IntegerEncoder {
                     ctx.idx += intervals - 1;
                 }
             }
-            4 => {
+            4 | 5 => {
                 debug_assert!(self.one_hot || self.rescale);
 
                 if self.one_hot {
@@ -166,16 +166,16 @@ impl<'a> ObsEncoderContext<'a> {
 
         let n = state.rank as usize;
         self.arr.fill(self.idx + n, 1.);
-        self.idx += 4;
+        self.idx += 3;
 
         let n = state.kyoku as usize;
         match self.version {
             // for v1, this was a mistake, it actually only uses 3 channels.
             1 => self.arr.fill_rows(self.idx, n, 1.),
-            2 | 3 | 4 => self.arr.fill(self.idx + n, 1.),
+            2 | 3 | 4 | 5 => self.arr.fill(self.idx + n, 1.),
             _ => unreachable!(),
         }
-        self.idx += 4;
+        self.idx += 3;
 
         let cap = match self.version {
             1 | 4 => 10,
@@ -197,7 +197,7 @@ impl<'a> ObsEncoderContext<'a> {
         self.arr.assign(self.idx + 1, state.jikaze.as_usize(), 1.);
         self.idx += 2;
 
-        if matches!(self.version, 2 | 3 | 4) {
+        if matches!(self.version, 2 | 3 | 4 | 5) {
             let n = (state.bakaze.as_u8() - tu8!(E)).min(1) * 4 + state.kyoku;
             IntegerEncoder::new(n as usize, 7)
                 .rescale(true)
@@ -220,7 +220,7 @@ impl<'a> ObsEncoderContext<'a> {
         self.idx += (18 - state.kawa[0].len().min(18)) * SELF_KAWA_ITEM_CHANNELS;
 
         let max_kawa_len = state.kawa.iter().map(|k| k.len()).max().unwrap();
-        if matches!(self.version, 3 | 4) {
+        if matches!(self.version, 3 | 4 | 5) {
             for (turn, kawa_item) in state.kawa[0].iter().enumerate() {
                 if let Some(kawa_item) = kawa_item {
                     let sutehai = kawa_item.sutehai;
@@ -279,7 +279,7 @@ impl<'a> ObsEncoderContext<'a> {
             }
         }
 
-        let v = state.tiles_left as f32 / 69.;
+        let v = state.tiles_left as f32 / 54.;
         self.arr.fill(self.idx, v);
         self.idx += 1;
 
@@ -328,7 +328,7 @@ impl<'a> ObsEncoderContext<'a> {
             self.idx += 1;
         }
 
-        if matches!(self.version, 2 | 3 | 4) {
+        if matches!(self.version, 2 | 3 | 4 | 5) {
             for (tid, count) in state.tiles_seen.iter().copied().enumerate() {
                 self.arr.assign(self.idx, tid, count as f32 / 4.);
             }
@@ -371,13 +371,13 @@ impl<'a> ObsEncoderContext<'a> {
             .enumerate()
             .filter(|&(_, &b)| b)
             .for_each(|(i, _)| self.arr.fill(self.idx + i, 1.));
-        self.idx += 3;
+        self.idx += 2;
         state.riichi_accepted[1..]
             .iter()
             .enumerate()
             .filter(|&(_, &b)| b)
             .for_each(|(i, _)| self.arr.fill(self.idx + i, 1.));
-        self.idx += 3;
+        self.idx += 2;
 
         state
             .waits
@@ -483,30 +483,19 @@ impl<'a> ObsEncoderContext<'a> {
         }
         self.idx += 1;
 
-        if cans.can_chi_low {
+        // Sanma: chi disabled, use slot for nukidora
+        if cans.can_nukidora {
             self.arr.fill(self.idx, 1.);
             if !self.at_kan_select {
                 self.mask[38] = true;
             }
         }
-        if cans.can_chi_mid {
-            self.arr.fill(self.idx + 1, 1.);
-            if !self.at_kan_select {
-                self.mask[39] = true;
-            }
-        }
-        if cans.can_chi_high {
-            self.arr.fill(self.idx + 2, 1.);
-            if !self.at_kan_select {
-                self.mask[40] = true;
-            }
-        }
-        self.idx += 3;
+        self.idx += 1;
 
         if cans.can_pon {
             self.arr.fill(self.idx, 1.);
             if !self.at_kan_select {
-                self.mask[41] = true;
+                self.mask[39] = true;
             }
         }
         self.idx += 1;
@@ -514,7 +503,7 @@ impl<'a> ObsEncoderContext<'a> {
         if cans.can_daiminkan {
             self.arr.fill(self.idx, 1.);
             if !self.at_kan_select {
-                self.mask[42] = true;
+                self.mask[40] = true;
             }
         }
         self.idx += 1;
@@ -527,7 +516,7 @@ impl<'a> ObsEncoderContext<'a> {
                 }
             }
             if !self.at_kan_select {
-                self.mask[42] = true;
+                self.mask[40] = true;
             }
         }
         self.idx += 1;
@@ -540,7 +529,7 @@ impl<'a> ObsEncoderContext<'a> {
                 }
             }
             if !self.at_kan_select {
-                self.mask[42] = true;
+                self.mask[40] = true;
             }
         }
         self.idx += 1;
@@ -548,7 +537,7 @@ impl<'a> ObsEncoderContext<'a> {
         if cans.can_agari() {
             self.arr.fill(self.idx, 1.);
             if !self.at_kan_select {
-                self.mask[43] = true;
+                self.mask[41] = true;
             }
         }
         self.idx += 1;
@@ -556,12 +545,12 @@ impl<'a> ObsEncoderContext<'a> {
         if cans.can_ryukyoku {
             self.arr.fill(self.idx, 1.);
             if !self.at_kan_select {
-                self.mask[44] = true;
+                self.mask[42] = true;
             }
         }
         self.idx += 1;
 
-        if self.version == 4 {
+        if matches!(self.version, 4 | 5) {
             if let Ok(SinglePlayerTables { max_ev_table }) = state.single_player_tables() {
                 // Get the max EV from the table that maximizes EV, which should
                 // be the global max EV.

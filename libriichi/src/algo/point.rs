@@ -101,13 +101,16 @@ impl Point {
         }
     }
 
+    /// Sanma tsumo-loss: the missing 4th player does not pay.
+    /// Oya tsumo: collects from 2 ko (not 3).
+    /// Ko tsumo: collects from 1 ko + 1 oya (not 2 ko + 1 oya).
     #[inline]
     #[must_use]
     pub const fn tsumo_total(self, is_oya: bool) -> i32 {
         if is_oya {
-            self.tsumo_ko * 3
+            self.tsumo_ko * 2
         } else {
-            self.tsumo_ko * 2 + self.tsumo_oya
+            self.tsumo_ko + self.tsumo_oya
         }
     }
 }

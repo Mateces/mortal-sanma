@@ -179,7 +179,7 @@ impl GameplayLoader {
                 true
             })
             .map(|(i, _)| i as u8)
-            .collect::<ArrayVec<[_; 4]>>()
+            .collect::<ArrayVec<[_; 3]>>()
             .into_par_iter()
             .map(|&player_id| {
                 Gameplay::load_events_by_player(self, events, player_id, invisibles.as_deref())
@@ -257,7 +257,7 @@ impl Gameplay {
             state: PlayerState::new(player_id),
             kyoku_idx: 0,
             // end_state: EndState::Passive,
-            opponent_states: array::from_fn(|i| PlayerState::new((player_id + i as u8 + 1) % 4)),
+            opponent_states: array::from_fn(|i| PlayerState::new((player_id + i as u8 + 1) % 3)),
             from_rinshan: false,
             yama_idx: 0,
             rinshan_idx: 0,
@@ -278,7 +278,7 @@ impl Gameplay {
     fn extend_from_event_window(
         &mut self,
         ctx: &mut LoaderContext<'_>,
-        wnd: &[Event; 4],
+        wnd: &[Event; 3],
     ) -> Result<()> {
         let LoaderContext {
             config,
