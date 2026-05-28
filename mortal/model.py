@@ -135,7 +135,7 @@ class Brain(nn.Module):
                 self.logsig_head = nn.Linear(512, 512)
             case 2:
                 pass
-            case 3 | 4:
+            case 3 | 4 | 5:
                 norm_builder = partial(nn.BatchNorm1d, conv_channels, momentum=0.01, eps=1e-3)
             case _:
                 raise ValueError(f'Unexpected version {self.version}')
@@ -165,7 +165,7 @@ class Brain(nn.Module):
                 mu = self.mu_head(latent_out)
                 logsig = self.logsig_head(latent_out)
                 return mu, logsig
-            case 2 | 3 | 4:
+            case 2 | 3 | 4 | 5:
                 return self.actv(phi)
             case _:
                 raise ValueError(f'Unexpected version {self.version}')
@@ -218,12 +218,12 @@ class DQN(nn.Module):
                     nn.Mish(inplace=True),
                     nn.Linear(hidden_size, ACTION_SPACE),
                 )
-            case 4:
+            case 4 | 5:
                 self.net = nn.Linear(1024, 1 + ACTION_SPACE)
                 nn.init.constant_(self.net.bias, 0)
 
     def forward(self, phi, mask):
-        if self.version == 4:
+        if self.version in (4, 5):
             v, a = self.net(phi).split((1, ACTION_SPACE), dim=-1)
         else:
             v = self.v_head(phi)
