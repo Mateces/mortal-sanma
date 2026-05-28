@@ -5,7 +5,11 @@ from torch.nn.utils.rnn import pack_padded_sequence, pad_sequence
 from typing import *
 from functools import partial
 from itertools import permutations
-from libriichi.consts import obs_shape, oracle_obs_shape, ACTION_SPACE, GRP_SIZE
+from libriichi import consts
+obs_shape = consts.obs_shape
+oracle_obs_shape = consts.oracle_obs_shape
+ACTION_SPACE = consts.ACTION_SPACE
+GRP_SIZE = consts.GRP_SIZE
 
 class ChannelAttention(nn.Module):
     def __init__(self, channels, ratio=16, actv_builder=nn.ReLU, bias=True):
