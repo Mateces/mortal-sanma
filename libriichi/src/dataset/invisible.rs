@@ -90,7 +90,7 @@ impl Invisible {
                         from_rinshan = false;
                     } else {
                         cur.yama.push(*pai);
-                        assert!(cur.yama.len() <= 70, "yama size overflow");
+                        assert!(cur.yama.len() <= 55, "yama size overflow");
                     }
                     unknown_tiles[pai.as_usize()] -= 1;
                 }
@@ -120,7 +120,7 @@ impl Invisible {
                         .collect();
                     filler.shuffle(&mut rng());
 
-                    while cur.yama.len() < 70 {
+                    while cur.yama.len() < 55 {
                         cur.yama.push(filler.pop().unwrap());
                     }
                     while cur.rinshan.len() < 4 {
@@ -253,5 +253,14 @@ const fn new_unknown_tiles() -> [u8; 37] {
     ret[tuz!(5mr)] = 1;
     ret[tuz!(5pr)] = 1;
     ret[tuz!(5sr)] = 1;
+    // Sanma: drop 2m-8m entirely; no aka 5m exists.
+    ret[tuz!(2m)] = 0;
+    ret[tuz!(3m)] = 0;
+    ret[tuz!(4m)] = 0;
+    ret[tuz!(5m)] = 0;
+    ret[tuz!(5mr)] = 0;
+    ret[tuz!(6m)] = 0;
+    ret[tuz!(7m)] = 0;
+    ret[tuz!(8m)] = 0;
     ret
 }
