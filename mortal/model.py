@@ -268,13 +268,14 @@ class GRP(nn.Module):
         logits = self.fc(state)
         return logits
 
-    # (N, 24) -> (N, player, rank_prob)
+    # (N, n_perms) -> (N, player, rank_prob)
     def calc_matrix(self, logits: Tensor):
         batch_size = logits.shape[0]
         probs = logits.softmax(-1)
-        matrix = torch.zeros(batch_size, 4, 4, dtype=probs.dtype)
-        for player in range(4):
-            for rank in range(4):
+        n_players = self.perms_t.shape[0]
+        matrix = torch.zeros(batch_size, n_players, n_players, dtype=probs.dtype)
+        for player in range(n_players):
+            for rank in range(n_players):
                 cond = self.perms_t[player] == rank
                 matrix[:, player, rank] = probs[:, cond].sum(-1)
         return matrix

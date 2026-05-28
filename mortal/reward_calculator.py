@@ -23,12 +23,13 @@ class RewardCalculator:
 
     def calc_rank_prob(self, player_id, grp_feature, rank_by_player):
         matrix = self.calc_grp(grp_feature)
+        n_players = matrix.shape[-1]
 
-        final_ranking = torch.zeros((1, 4), device=self.device)
+        final_ranking = torch.zeros((1, n_players), device=self.device)
         final_ranking[0, rank_by_player[player_id]] = 1.
         rank_prob = torch.cat((matrix[:, player_id], final_ranking))
         if self.uniform_init:
-            rank_prob[0, :] = 1 / 4
+            rank_prob[0, :] = 1 / n_players
         return rank_prob
 
     def calc_delta_pt(self, player_id, grp_feature, rank_by_player):
