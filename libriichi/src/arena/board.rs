@@ -714,7 +714,7 @@ impl BoardState {
                         arr.fill_rows(idx, n, 1.);
                         idx += 6;
                     }
-                    2 | 3 | 4 => {
+                    2 | 3 | 4 | 5 => {
                         arr.fill(idx + n, 1.);
                         idx += 7;
 

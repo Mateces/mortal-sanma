@@ -155,7 +155,7 @@ impl<'a> ObsEncoderContext<'a> {
                 2 | 3 => IntegerEncoder::new(score as usize / 100, 500)
                     .rbf_intervals(10)
                     .encode(&mut self),
-                4 => {
+                4 | 5 => {
                     let v = score.clamp(0, 30_000) as f32 / 30_000.;
                     self.arr.fill(self.idx, v);
                     self.idx += 1;
@@ -178,18 +178,18 @@ impl<'a> ObsEncoderContext<'a> {
         self.idx += 4;
 
         let cap = match self.version {
-            1 | 4 => 10,
+            1 | 4 | 5 => 10,
             2 | 3 => 6,
             _ => unreachable!(),
         };
         let n = state.honba as usize;
         IntegerEncoder::new(n, cap)
-            .rescale(self.version == 4)
+            .rescale(matches!(self.version, 4 | 5))
             .rbf_intervals(3)
             .encode(&mut self);
         let n = state.kyotaku as usize;
         IntegerEncoder::new(n, cap)
-            .rescale(self.version == 4)
+            .rescale(matches!(self.version, 4 | 5))
             .rbf_intervals(3)
             .encode(&mut self);
 
@@ -258,7 +258,7 @@ impl<'a> ObsEncoderContext<'a> {
                     }
                     self.idx += 6;
                 }
-                3 | 4 => {
+                3 | 4 | 5 => {
                     for (turn, kawa_item) in player_kawa.iter().enumerate() {
                         if let Some(kawa_item) = kawa_item {
                             let sutehai = kawa_item.sutehai;
