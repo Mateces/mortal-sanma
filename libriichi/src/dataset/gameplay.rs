@@ -263,9 +263,9 @@ impl Gameplay {
             rinshan_idx: 0,
         };
 
-        // It is guaranteed that there are at least 4 events.
-        // tsumo/dahai -> ryukyoku/hora -> end kyoku -> end game
-        for wnd in events.windows(4) {
+        // It is guaranteed that there are at least 3 events.
+        // tsumo/dahai -> ryukyoku/hora -> end kyoku
+        for wnd in events.windows(3) {
             data.extend_from_event_window(&mut ctx, wnd.try_into().unwrap())?;
         }
 
