@@ -123,6 +123,11 @@ class FileDatasetsIter(IterableDataset):
                     m = masks[i]
                     if a >= len(m) or not bool(m[a]):
                         continue
+                    _scores_abs = scores_seq[at_kyoku[i]]
+                    _scores_rel = np.array(
+                        [_scores_abs[(player_id + j) % 3] for j in range(3)],
+                        dtype=np.float32,
+                    )
                     entry = [
                         obs[i],
                         actions[i],
@@ -130,6 +135,7 @@ class FileDatasetsIter(IterableDataset):
                         steps_to_done[i],
                         kyoku_rewards[at_kyoku[i]],
                         player_ranks[at_kyoku[i] + 1],
+                        _scores_rel,
                     ]
                     if self.oracle:
                         entry.insert(1, invisible_obs[i])
