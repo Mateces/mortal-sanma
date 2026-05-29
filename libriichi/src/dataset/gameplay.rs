@@ -71,7 +71,7 @@ struct LoaderContext<'a> {
     kyoku_idx: usize,
 
     // fields below are only used for oracle
-    opponent_states: [PlayerState; 3],
+    opponent_states: [PlayerState; 2],
     from_rinshan: bool,
     yama_idx: usize,
     rinshan_idx: usize,

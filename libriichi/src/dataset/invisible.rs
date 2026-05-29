@@ -151,7 +151,7 @@ impl Invisible {
     // should be identical.
     pub fn encode(
         &self,
-        opponent_states: &[PlayerState; 3],
+        opponent_states: &[PlayerState; 2],
         yama_idx: usize,
         rinshan_idx: usize,
         version: u32,

@@ -30,7 +30,7 @@ pub const fn obs_shape(version: u32) -> (usize, usize) {
         3 => (934, 34),
         4 => (1012, 34),
         // Sanma version
-        5 => (775, 34),
+        5 => (780, 34),
         _ => unreachable!(),
     }
 }
@@ -41,7 +41,7 @@ pub const fn oracle_obs_shape(version: u32) -> (usize, usize) {
     match version {
         1 => (211, 34),
         2 | 3 | 4 => (217, 34),
-        5 => (145, 34),
+        5 => (170, 34),
         _ => unreachable!(),
     }
 }
