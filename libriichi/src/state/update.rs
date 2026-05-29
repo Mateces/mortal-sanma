@@ -307,6 +307,13 @@ impl PlayerState {
             && self.scores[0] >= 1000
             && (self.shanten == 0 || self.shanten == 1 && self.has_next_shanten_discard);
 
+        // Sanma: player may declare nukidora (抜きドラ) when holding a North
+        // tile after drawing. Allowed even during riichi (Tenhou rule treats
+        // it like an ankan that doesn't change wait — checked at validate time
+        // via `move_tile`). Disallow when no rinshan tiles are left to draw.
+        self.last_cans.can_nukidora =
+            self.tehai[tuz!(N)] > 0 && self.tiles_left > 0;
+
         Ok(())
     }
 
