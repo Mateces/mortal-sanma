@@ -1,5 +1,4 @@
 use super::{Grp, Invisible};
-use crate::chi_type::ChiType;
 use crate::mjai::Event;
 use crate::state::PlayerState;
 use std::array;
@@ -341,36 +340,30 @@ impl Gameplay {
         let label_opt = match *next {
             Event::Dahai { pai, .. } => Some(pai.as_usize()),
             Event::Reach { .. } => Some(37),
-            Event::Chi {
-                actor,
-                pai,
-                consumed,
-                ..
-            } if actor == self.player_id => match ChiType::new(consumed, pai) {
-                ChiType::Low => Some(38),
-                ChiType::Mid => Some(39),
-                ChiType::High => Some(40),
-            },
-            Event::Pon { actor, .. } if actor == self.player_id => Some(41),
+            // Sanma: chi is disabled. If chi events somehow appear (legacy
+            // yonma logs), skip the entry rather than emitting a label.
+            Event::Chi { actor, .. } if actor == self.player_id => None,
+            Event::Nukidora { actor, .. } if actor == self.player_id => Some(38),
+            Event::Pon { actor, .. } if actor == self.player_id => Some(39),
             Event::Daiminkan { actor, pai, .. } if actor == self.player_id => {
                 if config.always_include_kan_select {
                     kan_select = Some(pai.deaka().as_usize());
                 }
-                Some(42)
+                Some(40)
             }
             Event::Kakan { pai, .. } => {
                 if config.always_include_kan_select || state.kakan_candidates().len() > 1 {
                     kan_select = Some(pai.deaka().as_usize());
                 }
-                Some(42)
+                Some(40)
             }
             Event::Ankan { consumed, .. } => {
                 if config.always_include_kan_select || state.ankan_candidates().len() > 1 {
                     kan_select = Some(consumed[0].deaka().as_usize());
                 }
-                Some(42)
+                Some(40)
             }
-            Event::Ryukyoku { .. } if cans.can_ryukyoku => Some(44),
+            Event::Ryukyoku { .. } if cans.can_ryukyoku => Some(42),
             _ => {
                 let mut ret = None;
 
@@ -381,7 +374,7 @@ impl Gameplay {
                         match *ev {
                             Event::EndKyoku => break,
                             Event::Hora { actor, .. } if actor == self.player_id => {
-                                ret = Some(43);
+                                ret = Some(41);
                                 break;
                             }
                             _ => (),
@@ -391,18 +384,14 @@ impl Gameplay {
 
                 if ret.is_none() {
                     // It is now proven there is no ron from the POV.
-                    if cans.can_chi() && matches!(next, Event::Tsumo { .. })
-                        || (cans.can_pon || cans.can_daiminkan || cans.can_ron_agari)
-                            && !has_any_ron
+                    // Sanma: no chi. We still keep the original "deny"
+                    // semantics for pon/daiminkan/ron.
+                    if (cans.can_pon || cans.can_daiminkan || cans.can_ron_agari)
+                        && !has_any_ron
                     {
-                        // Can chi, but actively denied instead of being
-                        // interrupted by other's pon/daiminkan/ron.
-                        //
-                        // or
-                        //
                         // Can pon/daiminkan/ron, but actively denied
                         // instead of being interrupted by other's ron.
-                        ret = Some(45);
+                        ret = Some(43);
                     }
                 }
 
