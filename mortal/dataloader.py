@@ -119,6 +119,10 @@ class FileDatasetsIter(IterableDataset):
                         steps_to_done[i] = steps_to_done[i + 1] + int(apply_gamma[i])
 
                 for i in range(game_size):
+                    a = int(actions[i])
+                    m = masks[i]
+                    if a >= len(m) or not bool(m[a]):
+                        continue
                     entry = [
                         obs[i],
                         actions[i],
