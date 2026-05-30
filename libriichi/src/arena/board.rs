@@ -60,7 +60,7 @@ pub struct BoardState {
     has_abortive_ryukyoku: bool,
     kyoku_deltas: [i32; 3],
 
-    #[derivative(Default(value = "70"))]
+    #[derivative(Default(value = "55"))]
     tiles_left: u8,
     tsumo_actor: u8,
     // Just a fancy bool
@@ -653,6 +653,17 @@ impl BoardState {
                 self.broadcast(&ev.event);
                 self.add_log(ev.clone());
                 self.riichi_to_be_accepted = Some(actor);
+            }
+
+            Event::Nukidora { actor, .. } => {
+                // Sanma kita-nuki: declare the north tile as bonus dora and
+                // draw a replacement from rinshan. Mirrors how the player
+                // state flags `at_rinshan = true`; the board feeds the next
+                // tsumo from rinshan via `deal_from_rinshan`.
+                self.broadcast(&ev.event);
+                self.add_log(ev.clone());
+                self.tsumo_actor = actor;
+                self.deal_from_rinshan = Some(());
             }
 
             Event::Hora { actor, target, .. } => {
