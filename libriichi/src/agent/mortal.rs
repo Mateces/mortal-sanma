@@ -318,13 +318,13 @@ impl BatchAgent for MortalBatchAgent {
 
         let orig_action = self.actions[action_idx];
         let action =
-            if self.enable_rule_based_agari_guard && orig_action == 43 && !state.rule_based_agari()
+            if self.enable_rule_based_agari_guard && orig_action == 41 && !state.rule_based_agari()
             {
                 // The engine wants agari, but the rule-based engine is against
                 // it. In rule-based agari guard mode, it will force to execute
                 // the best alternative option other than agari.
                 let mut q_values = self.q_values[action_idx];
-                q_values[43] = f32::MIN;
+                q_values[41] = f32::MIN;
                 q_values
                     .iter()
                     .enumerate()
@@ -364,95 +364,14 @@ impl BatchAgent for MortalBatchAgent {
 
             38 => {
                 ensure!(
-                    cans.can_chi_low,
-                    "failed chi low check: {}",
+                    cans.can_nukidora,
+                    "failed nukidora check: {}",
                     state.brief_info()
                 );
 
-                let pai = state
-                    .last_kawa_tile()
-                    .context("invalid state: no last kawa tile")?;
-                let first = pai.next();
-
-                let can_akaize_consumed = match pai.as_u8() {
-                    tu8!(3m) | tu8!(4m) => akas_in_hand[0],
-                    tu8!(3p) | tu8!(4p) => akas_in_hand[1],
-                    tu8!(3s) | tu8!(4s) => akas_in_hand[2],
-                    _ => false,
-                };
-                let consumed = if can_akaize_consumed {
-                    [first.akaize(), first.next().akaize()]
-                } else {
-                    [first, first.next()]
-                };
-                Event::Chi {
-                    actor,
-                    target: cans.target_actor,
-                    pai,
-                    consumed,
-                }
+                Event::Nukidora { actor, pai: must_tile!(tu8!(N)) }
             }
             39 => {
-                ensure!(
-                    cans.can_chi_mid,
-                    "failed chi mid check: {}",
-                    state.brief_info()
-                );
-
-                let pai = state
-                    .last_kawa_tile()
-                    .context("invalid state: no last kawa tile")?;
-
-                let can_akaize_consumed = match pai.as_u8() {
-                    tu8!(4m) | tu8!(6m) => akas_in_hand[0],
-                    tu8!(4p) | tu8!(6p) => akas_in_hand[1],
-                    tu8!(4s) | tu8!(6s) => akas_in_hand[2],
-                    _ => false,
-                };
-                let consumed = if can_akaize_consumed {
-                    [pai.prev().akaize(), pai.next().akaize()]
-                } else {
-                    [pai.prev(), pai.next()]
-                };
-                Event::Chi {
-                    actor,
-                    target: cans.target_actor,
-                    pai,
-                    consumed,
-                }
-            }
-            40 => {
-                ensure!(
-                    cans.can_chi_high,
-                    "failed chi high check: {}",
-                    state.brief_info()
-                );
-
-                let pai = state
-                    .last_kawa_tile()
-                    .context("invalid state: no last kawa tile")?;
-                let last = pai.prev();
-
-                let can_akaize_consumed = match pai.as_u8() {
-                    tu8!(6m) | tu8!(7m) => akas_in_hand[0],
-                    tu8!(6p) | tu8!(7p) => akas_in_hand[1],
-                    tu8!(6s) | tu8!(7s) => akas_in_hand[2],
-                    _ => false,
-                };
-                let consumed = if can_akaize_consumed {
-                    [last.prev().akaize(), last.akaize()]
-                } else {
-                    [last.prev(), last]
-                };
-                Event::Chi {
-                    actor,
-                    target: cans.target_actor,
-                    pai,
-                    consumed,
-                }
-            }
-
-            41 => {
                 ensure!(cans.can_pon, "failed pon check: {}", state.brief_info());
 
                 let pai = state
@@ -478,7 +397,7 @@ impl BatchAgent for MortalBatchAgent {
                 }
             }
 
-            42 => {
+            40 => {
                 ensure!(
                     cans.can_daiminkan || cans.can_ankan || cans.can_kakan,
                     "failed kan check: {}",
@@ -543,7 +462,7 @@ impl BatchAgent for MortalBatchAgent {
                 }
             }
 
-            43 => {
+            41 => {
                 ensure!(
                     cans.can_agari(),
                     "failed hora check: {}",
@@ -558,7 +477,7 @@ impl BatchAgent for MortalBatchAgent {
                 }
             }
 
-            44 => {
+            42 => {
                 ensure!(
                     cans.can_ryukyoku,
                     "failed ryukyoku check: {}",
@@ -568,7 +487,7 @@ impl BatchAgent for MortalBatchAgent {
                 Event::Ryukyoku { deltas: None }
             }
 
-            // 45
+            // 43 = pass
             _ => Event::None,
         };
 
