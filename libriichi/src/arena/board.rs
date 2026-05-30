@@ -70,7 +70,9 @@ pub struct BoardState {
     riichi_to_be_accepted: Option<u8>,
     #[derivative(Default(value = "[true; 3]"))]
     can_nagashi_mangan: [bool; 3],
-    #[derivative(Default(value = "true"))]
+    // Sanma has no 四風連打 abortive ryukyoku (only 3 players). Keep the
+    // field for code-share with the four_wind logic, but always disable.
+    #[derivative(Default(value = "false"))]
     can_four_wind: bool,
     four_wind_tile: Option<Tile>,
     accepted_riichis: u8,
