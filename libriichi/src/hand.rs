@@ -55,7 +55,7 @@ pub fn hand_with_aka(s: &str) -> Result<[u8; 37]> {
 pub fn hand(s: &str) -> Result<[u8; 34]> {
     let mut ret = [0; 34];
     let hand = hand_with_aka(s)?;
-    vec_add_assign(&mut ret, &hand);
+    vec_add_assign(&mut ret, &hand[..34]);
     ret[tuz!(5m)] += hand[tuz!(5mr)];
     ret[tuz!(5p)] += hand[tuz!(5pr)];
     ret[tuz!(5s)] += hand[tuz!(5sr)];
