@@ -982,6 +982,15 @@ impl PlayerState {
             self.at_rinshan = true;
             // nukidora counts as a bonus dora for the player
             self.doras_owned[0] += 1;
+            // Tehai changed (3n+2 → 3n+1); refresh shanten and waits so the
+            // upcoming rinshan tsumo evaluates can_tsumo_agari against the
+            // post-nuki hand. Without this, the at_rinshan branch in `tsumo`
+            // can mark can_tsumo_agari=true based on stale pre-nuki waits,
+            // and AgariCalculator then panics with "not a hora hand".
+            if !self.riichi_accepted[0] {
+                self.update_shanten();
+                self.update_waits_and_furiten();
+            }
         } else {
             self.witness_tile(pai)?;
             self.update_doras_owned(actor_rel, pai);
