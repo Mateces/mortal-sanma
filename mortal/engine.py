@@ -65,7 +65,7 @@ class MortalEngine:
                 else:
                     latent = mu
                 q_out = self.dqn(latent, masks)
-            case 2 | 3 | 4:
+            case 2 | 3 | 4 | 5:
                 phi = self.brain(obs)
                 q_out = self.dqn(phi, masks)
 
