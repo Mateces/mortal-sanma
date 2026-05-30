@@ -57,6 +57,50 @@ impl OneVsTwo {
             Ok(rankings)
         })
     }
+
+    /// Same as `py_vs_py`, but returns per-game records instead of aggregate
+    /// rankings. Each record is
+    /// `(seed, key, split_idx, [name0, name1, name2], [score0, score1, score2],
+    ///  [rank0, rank1, rank2], challenger_seat)`,
+    /// where `split_idx` is 0/1/2 (challenger seat A/B/C) and the score / rank
+    /// arrays are indexed by table seat (0/1/2 = oya for kyoku 1/2/3).
+    pub fn py_vs_py_detailed(
+        &self,
+        challenger: PyObject,
+        champion: PyObject,
+        seed_start: (u64, u64),
+        seed_count: u64,
+        py: Python<'_>,
+    ) -> Result<Vec<(u64, u64, u8, [String; 3], [i32; 3], [u8; 3], u8)>> {
+        py.allow_threads(move || {
+            let results = self.run_batch(
+                |player_ids| new_py_agent(challenger, player_ids),
+                |player_ids| new_py_agent(champion, player_ids),
+                seed_start,
+                seed_count,
+            )?;
+
+            let records: Vec<_> = results
+                .into_iter()
+                .enumerate()
+                .map(|(i, r)| {
+                    let split_idx = (i % 3) as u8;
+                    let challenger_seat = split_idx;
+                    let rankings = r.rankings();
+                    (
+                        r.seed.0,
+                        r.seed.1,
+                        split_idx,
+                        r.names,
+                        r.scores,
+                        rankings.rank_by_player,
+                        challenger_seat,
+                    )
+                })
+                .collect();
+            Ok(records)
+        })
+    }
 }
 
 impl OneVsTwo {
