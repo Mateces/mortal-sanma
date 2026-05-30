@@ -454,19 +454,23 @@ impl PlayerState {
             winning_tile: winning_tile.deaka().as_u8(),
             is_ron,
         };
-        let agari = agari_calc
-            .agari(additional_hans, final_doras_owned)
-            .with_context(|| format!(
-                "not a hora hand: tehai={:?} winning={} is_ron={} is_menzen={} \
-                 chis={:?} pons={:?} minkans={:?} ankans={:?} bakaze={} jikaze={} \
-                 oya={} riichi_accepted={} at_rinshan={} tiles_left={} can_w_riichi={} \
-                 add_hans={} doras={}",
-                tehai, winning_tile, is_ron, self.is_menzen,
-                self.chis, self.pons, self.minkans, self.ankans,
-                self.bakaze, self.jikaze, self.oya,
-                self.riichi_accepted[0], self.at_rinshan, self.tiles_left, self.can_w_riichi,
-                additional_hans, final_doras_owned,
-            ))?;
+        let agari = match agari_calc.agari(additional_hans, final_doras_owned) {
+            Some(a) => a,
+            None => {
+                eprintln!(
+                    "[AGARI_PANIC] tehai={:?} winning={} is_ron={} is_menzen={} \
+                     chis={:?} pons={:?} minkans={:?} ankans={:?} bakaze={} jikaze={} \
+                     oya={} riichi_accepted={} at_rinshan={} tiles_left={} can_w_riichi={} \
+                     add_hans={} doras={}",
+                    tehai, winning_tile, is_ron, self.is_menzen,
+                    self.chis, self.pons, self.minkans, self.ankans,
+                    self.bakaze, self.jikaze, self.oya,
+                    self.riichi_accepted[0], self.at_rinshan, self.tiles_left, self.can_w_riichi,
+                    additional_hans, final_doras_owned,
+                );
+                anyhow::bail!("not a hora hand");
+            }
+        };
 
         Ok(agari.point(self.oya == 0))
     }
