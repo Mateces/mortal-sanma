@@ -310,9 +310,10 @@ impl PlayerState {
         // Sanma: player may declare nukidora (抜きドラ) when holding a North
         // tile after drawing. Allowed even during riichi (Tenhou rule treats
         // it like an ankan that doesn't change wait — checked at validate time
-        // via `move_tile`). Disallow when no rinshan tiles are left to draw.
+        // via `move_tile`). Disallow when no rinshan tiles are left to draw
+        // (kans_on_board doubles as the shared rinshan-slot counter).
         self.last_cans.can_nukidora =
-            self.tehai[tuz!(N)] > 0 && self.tiles_left > 0;
+            self.tehai[tuz!(N)] > 0 && self.tiles_left > 0 && self.kans_on_board < 4;
 
         Ok(())
     }
@@ -985,6 +986,10 @@ impl PlayerState {
             self.witness_tile(pai)?;
             self.update_doras_owned(actor_rel, pai);
         }
+        // Both kans and kita-nuki replacements draw from the 4-tile rinshan;
+        // bump the shared counter so can_{ankan,kakan,nukidora} all gate on
+        // it and we never run the wall dry.
+        self.kans_on_board += 1;
         self.can_w_riichi = false;
         Ok(())
     }
