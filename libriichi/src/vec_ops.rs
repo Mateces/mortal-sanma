@@ -7,5 +7,12 @@ where
     L: Copy + AddAssign<R>,
     R: Copy,
 {
+    assert_eq!(
+        lhs.len(),
+        rhs.len(),
+        "vec_add_assign length mismatch: lhs={}, rhs={}",
+        lhs.len(),
+        rhs.len(),
+    );
     lhs.iter_mut().zip(rhs).for_each(|(l, &r)| *l += r);
 }

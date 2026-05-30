@@ -253,19 +253,23 @@ impl BoardState {
             .for_each(|i| {
                 has_nagashi_mangan = true;
                 if i as u8 == self.oya {
-                    let mut dod = [-4000; 4];
-                    dod[i] = 12000;
+                    // Sanma oya nagashi mangan: 2 ko pay 4000 each (tsumo-loss),
+                    // oya collects 8000.
+                    let mut dod = [-4000; 3];
+                    dod[i] = 8000;
                     vec_add_assign(&mut deltas, &dod);
                 } else {
-                    let mut dod = [-2000; 4];
-                    dod[i] = 8000;
+                    // Sanma ko nagashi mangan: 1 ko pays 2000, oya pays 4000,
+                    // winner collects 6000.
+                    let mut dod = [-2000; 3];
+                    dod[i] = 6000;
                     dod[self.oya as usize] = -4000;
                     vec_add_assign(&mut deltas, &dod);
                 };
             });
 
         if !has_nagashi_mangan {
-            let tenpai_actors: ArrayVec<[_; 4]> = self
+            let tenpai_actors: ArrayVec<[_; 3]> = self
                 .player_states
                 .iter()
                 .enumerate()
@@ -273,15 +277,15 @@ impl BoardState {
                 .map(|(i, _)| i)
                 .collect();
 
+            // Sanma noten bappu (Tenhou rule): total movement = 2000.
             let (plus, minus) = match tenpai_actors.len() {
-                1 => (3000, -1000),
-                2 => (1500, -1500),
-                3 => (1000, -3000),
-                // 0 | 4
+                1 => (2000, -1000),
+                2 => (1000, -2000),
+                // 0 | 3
                 _ => (0, 0),
             };
             if plus > 0 {
-                let mut dod = [minus; 4];
+                let mut dod = [minus; 3];
                 tenpai_actors.into_iter().for_each(|i| dod[i] = plus);
                 vec_add_assign(&mut deltas, &dod);
             }
@@ -447,9 +451,10 @@ impl BoardState {
             // point and sum of tsumo point should be equal.
             deltas[pao_target as usize] = -point.ron - honba_left * 300;
         } else {
-            deltas.fill(-point.tsumo_ko - honba_left * 100);
+            // Sanma honba: 2 non-winners each pay 150/honba (sum 300 to winner).
+            deltas.fill(-point.tsumo_ko - honba_left * 150);
             if single_actor != self.oya {
-                deltas[self.oya as usize] = -point.tsumo_oya - honba_left * 100;
+                deltas[self.oya as usize] = -point.tsumo_oya - honba_left * 150;
             }
         };
         deltas[single_actor as usize] =

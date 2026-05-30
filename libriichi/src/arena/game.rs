@@ -10,7 +10,7 @@ use indicatif::{ProgressBar, ProgressStyle};
 use ndarray::prelude::*;
 
 pub struct BatchGame {
-    /// 8 for hanchan and 4 for tonpuu
+    /// Sanma: 6 for hanchan (East+South) and 3 for tonpuu (East-only).
     pub length: u8,
     pub init_scores: [i32; 3],
     pub disable_progress_bar: bool,
@@ -66,7 +66,7 @@ impl Game {
             // or, after all-last
             //   and, oya is not in renchan (if oya is in renchan, it would already have been ended in the renchan owari check)
             //   and, anyone has more than 30k
-            if self.kyoku >= self.length + 4
+            if self.kyoku >= self.length + 3
                 || self.kyoku >= self.length
                     && !self.in_renchan
                     && self.scores.iter().any(|&s| s >= 30000)
@@ -221,7 +221,7 @@ impl Game {
 impl BatchGame {
     pub const fn tenhou_hanchan(disable_progress_bar: bool) -> Self {
         Self {
-            length: 8,
+            length: 6,
             init_scores: [35000; 3],
             disable_progress_bar,
         }

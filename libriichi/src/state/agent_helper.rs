@@ -346,9 +346,9 @@ impl PlayerState {
                 .skip(1)
                 .for_each(|(idx, s)| {
                     if idx as u8 == self.oya {
-                        *s -= max_win_point.tsumo_oya + self.honba as i32 * 100;
+                        *s -= max_win_point.tsumo_oya + self.honba as i32 * 150;
                     } else {
-                        *s -= max_win_point.tsumo_ko + self.honba as i32 * 100;
+                        *s -= max_win_point.tsumo_ko + self.honba as i32 * 150;
                     }
                 });
         }
