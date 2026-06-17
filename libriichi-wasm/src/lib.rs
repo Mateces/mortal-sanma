@@ -33,6 +33,56 @@ pub fn action_space() -> u32 {
 }
 
 #[wasm_bindgen]
+pub fn canonical_action_space() -> u32 {
+    consts::CANONICAL_ACTION_SPACE as u32
+}
+
+/// Remap a canonical 47-dim mask down to the trained 3p 44-dim mask the DQN
+/// consumes. canonical 0-38 -> trained 0-38; canonical 39/40/41 (chi) dropped;
+/// canonical 42(pon)->39, 43(kan)->40, 44(agari)->41, 45(ryukyoku)->42,
+/// 46(pass)->43.
+#[wasm_bindgen]
+pub fn remap_mask_canonical_to_model(mask47: &[u8], version: u32) -> Result<Vec<u8>, String> {
+    if mask47.len() != consts::CANONICAL_ACTION_SPACE {
+        return Err(format!(
+            "mask len {} != canonical action space {}",
+            mask47.len(),
+            consts::CANONICAL_ACTION_SPACE
+        ));
+    }
+    // TODO(phase-3/4p): when a 4-player libriichi variant exists, branch on
+    // `version`/player-count and apply the 4p trained(46-dim) remap instead.
+    // This crate is 3-player sanma only, so every version uses the 3p remap.
+    let _ = version;
+    let mut out = vec![0u8; consts::ACTION_SPACE];
+    out[..=38].copy_from_slice(&mask47[..=38]);
+    out[39] = mask47[42]; // pon
+    out[40] = mask47[43]; // kan
+    out[41] = mask47[44]; // agari
+    out[42] = mask47[45]; // ryukyoku
+    out[43] = mask47[46]; // pass
+    Ok(out)
+}
+
+/// Interpret a trained 3p model output index (0..44) as a canonical index
+/// (0..47). trained 0-38 -> canonical 0-38; trained 39->42, 40->43, 41->44,
+/// 42->45, 43->46.
+#[wasm_bindgen]
+pub fn interpret_model_idx(model_idx: u32, version: u32) -> Result<u32, String> {
+    // TODO(phase-3/4p): branch on version/player-count for the 4p (46-dim) map.
+    let _ = version;
+    let i = model_idx as usize;
+    if i >= consts::ACTION_SPACE {
+        return Err(format!(
+            "model_idx {i} out of range (0..{})",
+            consts::ACTION_SPACE
+        ));
+    }
+    let canonical = if i <= 38 { i } else { 42 + (i - 39) };
+    Ok(canonical as u32)
+}
+
+#[wasm_bindgen]
 pub fn obs_shape(version: u32) -> Result<Vec<u32>, JsError> {
     let s = consts::obs_shape(version);
     Ok(vec![s.0 as u32, s.1 as u32])
@@ -93,6 +143,22 @@ impl PlayerStateHandle {
     pub fn encode_obs_mask(&self, version: u32, at_kan_select: bool) -> Vec<u8> {
         let (_obs, mask) = self.inner.encode_obs(version, at_kan_select);
         mask.into_raw_vec_and_offset().0.into_iter().map(|b| b as u8).collect()
+    }
+
+    /// Encode the action mask in the canonical 47-dim layout
+    /// (forward-compatible; remaps the internal trained 44-dim mask up to 47).
+    pub fn encode_obs_mask_canonical(&self, version: u32, at_kan_select: bool) -> Vec<u8> {
+        let (_obs, mask) = self.inner.encode_obs(version, at_kan_select);
+        let mut out = vec![0u8; consts::CANONICAL_ACTION_SPACE];
+        for i in 0..=38usize {
+            out[i] = mask[i] as u8;
+        }
+        out[42] = mask[39] as u8; // pon
+        out[43] = mask[40] as u8; // kan
+        out[44] = mask[41] as u8; // agari
+        out[45] = mask[42] as u8; // ryukyoku
+        out[46] = mask[43] as u8; // pass
+        out
     }
 }
 
