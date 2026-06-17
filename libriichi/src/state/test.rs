@@ -1422,3 +1422,67 @@ fn chi_at_0_shanten() {
     assert!(ps.at_furiten);
     assert!(!ps.has_next_shanten_discard);
 }
+
+#[test]
+fn nukidora_allowed_during_riichi() {
+    // Regression for the "立直不拔北" bug: tsumo()'s riichi branch returned
+    // early (update.rs:285) before the can_nukidora assignment (update.rs:315),
+    // so a North drawn while in riichi could never be extracted (kita).
+    let mut ps = PlayerState::new(0);
+    // Player 0 is dealt a tanki-tenpai hand WITHOUT a North, so drawing North
+    // later keeps the riichi wait and is a pure nukidora opportunity.
+    // Hand: 123p 456p 789p 234s 5s  -> 4 melds + lone 5s = tanki wait on 5s.
+    ps.test_update(&Event::StartKyoku {
+        bakaze: t!(E),
+        kyoku: 1,
+        honba: 0,
+        kyotaku: 0,
+        oya: 0,
+        scores: [35000; 3],
+        dora_marker: t!(1p),
+        tehais: [
+            tile37_to_vec(&hand_with_aka("123p 456p 789p 234s 5s").unwrap())
+                .try_into()
+                .unwrap(),
+            [t!(?); 13],
+            [t!(?); 13],
+        ],
+    });
+
+    // Player 0 draws a non-wait, non-N tile (1m), declares riichi, discards it.
+    let cans = ps.test_update(&Event::Tsumo { actor: 0, pai: t!(1m) });
+    assert!(cans.can_riichi, "player 0 should be able to declare riichi");
+    ps.test_update(&Event::Reach { actor: 0 });
+    ps.test_update(&Event::Dahai {
+        actor: 0,
+        pai: t!(1m),
+        tsumogiri: true,
+    });
+    ps.test_update(&Event::ReachAccepted { actor: 0 });
+
+    // Opponents move once each so the turn returns to player 0.
+    ps.test_update(&Event::Tsumo { actor: 1, pai: t!(?) });
+    ps.test_update(&Event::Dahai {
+        actor: 1,
+        pai: t!(E),
+        tsumogiri: false,
+    });
+    ps.test_update(&Event::Tsumo { actor: 2, pai: t!(?) });
+    ps.test_update(&Event::Dahai {
+        actor: 2,
+        pai: t!(S),
+        tsumogiri: false,
+    });
+
+    // Player 0 draws North while in riichi. This is the bug: can_nukidora
+    // must be reachable and true (holds N, tiles_left>0, kans_on_board<4).
+    let cans = ps.test_update(&Event::Tsumo { actor: 0, pai: t!(N) });
+    assert!(
+        cans.can_nukidora,
+        "nukidora (kita) must be allowed after drawing North during riichi"
+    );
+
+    // Sanity: the canonical/trained mask slot 38 must reflect it too.
+    let (_, mask) = ps.encode_obs(MAX_VERSION, false);
+    assert!(mask[38], "trained mask slot 38 (nukidora) must be set");
+}
