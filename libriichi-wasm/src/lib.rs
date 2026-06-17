@@ -102,3 +102,91 @@ pub fn init_panic_hook() {
         eprintln!("{info}");
     }));
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn canonical_action_space_is_47() {
+        assert_eq!(consts::CANONICAL_ACTION_SPACE, 47);
+        assert_eq!(canonical_action_space(), 47);
+    }
+
+    #[test]
+    fn remap_canonical_to_model_identity_region() {
+        let mut canon = vec![0u8; 47];
+        for &c in &[0usize, 5, 33, 34, 35, 36, 37, 38] {
+            canon[c] = 1;
+        }
+        let model = remap_mask_canonical_to_model(&canon, 5).unwrap();
+        assert_eq!(model.len(), 44);
+        for &c in &[0usize, 5, 33, 34, 35, 36, 37, 38] {
+            assert_eq!(model[c], 1, "canonical {c} must map to trained {c}");
+        }
+    }
+
+    #[test]
+    fn remap_canonical_to_model_shifted_region() {
+        let mut canon = vec![0u8; 47];
+        for &c in &[42usize, 43, 44, 45, 46] {
+            canon[c] = 1;
+        }
+        let model = remap_mask_canonical_to_model(&canon, 5).unwrap();
+        assert_eq!(model[39], 1); // pon  <- canonical 42
+        assert_eq!(model[40], 1); // kan  <- 43
+        assert_eq!(model[41], 1); // agari<- 44
+        assert_eq!(model[42], 1); // ryukyoku <- 45
+        assert_eq!(model[43], 1); // pass <- 46
+    }
+
+    #[test]
+    fn remap_drops_chi_slots() {
+        let mut canon = vec![0u8; 47];
+        canon[39] = 1; // chi_low
+        canon[40] = 1; // chi_mid
+        canon[41] = 1; // chi_high
+        let model = remap_mask_canonical_to_model(&canon, 5).unwrap();
+        assert!(model.iter().all(|&b| b == 0), "chi must map to nothing in 3p");
+    }
+
+    #[test]
+    fn remap_rejects_wrong_length() {
+        assert!(remap_mask_canonical_to_model(&[0u8; 44], 5).is_err());
+        assert!(remap_mask_canonical_to_model(&[0u8; 48], 5).is_err());
+    }
+
+    #[test]
+    fn interpret_model_idx_identity_and_shift() {
+        for t in 0..=38u32 {
+            assert_eq!(interpret_model_idx(t, 5).unwrap(), t);
+        }
+        assert_eq!(interpret_model_idx(39, 5).unwrap(), 42); // pon
+        assert_eq!(interpret_model_idx(40, 5).unwrap(), 43); // kan
+        assert_eq!(interpret_model_idx(41, 5).unwrap(), 44); // agari
+        assert_eq!(interpret_model_idx(42, 5).unwrap(), 45); // ryukyoku
+        assert_eq!(interpret_model_idx(43, 5).unwrap(), 46); // pass
+    }
+
+    #[test]
+    fn interpret_model_idx_rejects_out_of_range() {
+        assert!(interpret_model_idx(44, 5).is_err());
+    }
+
+    #[test]
+    fn round_trip_canonical_to_model_to_canonical() {
+        // For every set of canonical actions that have a trained slot (all but chi),
+        // remap down then interpret the argmax back: identity must hold.
+        let mut canon = vec![0u8; 47];
+        for &c in &[3usize, 34, 37, 38, 42, 43, 44, 45, 46] {
+            canon[c] = 1;
+        }
+        let model = remap_mask_canonical_to_model(&canon, 5).unwrap();
+        for mi in 0..44 {
+            if model[mi] == 1 {
+                let back = interpret_model_idx(mi as u32, 5).unwrap() as usize;
+                assert_eq!(canon[back], 1, "trained {mi} -> canonical {back} not set");
+            }
+        }
+    }
+}
