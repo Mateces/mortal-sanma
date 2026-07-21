@@ -2,10 +2,12 @@ mod board;
 mod game;
 mod one_vs_two;
 mod result;
+mod three_way;
 
 pub use board::Board;
 pub use one_vs_two::OneVsTwo;
 pub use result::GameResult;
+pub use three_way::ThreeWay;
 
 use crate::py_helper::add_submodule;
 
@@ -18,5 +20,6 @@ pub(crate) fn register_module(
 ) -> PyResult<()> {
     let m = PyModule::new(py, "arena")?;
     m.add_class::<OneVsTwo>()?;
+    m.add_class::<ThreeWay>()?;
     add_submodule(py, prefix, super_mod, &m)
 }
